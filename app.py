@@ -514,7 +514,7 @@ def main():
     # Sidebar
     with st.sidebar:
         st.markdown("### ⚙️ Settings")
-        ch_api_key = st.text_input(
+        ch_api_key = st.secrets.get("CH_API_KEY", "") or st.text_input(
             "Companies House API Key",
             type="password",
             help="Free key from developer.company-information.service.gov.uk — enables tenant company lookup"

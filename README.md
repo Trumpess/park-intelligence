@@ -1,78 +1,70 @@
-# Arc Parks Intelligence Tool
+# UK Science Parks Intelligence Tool
 
-**Oxford–Cambridge Science & Innovation Parks — Digital Infrastructure Profiler**
+National prospecting tool for digital infrastructure intelligence across UK science and innovation parks.
 
-An internal prospecting tool that automatically generates digital infrastructure intelligence reports for science and innovation parks along the Oxford–Cambridge Arc. No input required from the target park — it runs entirely on public data.
+## Coverage
+- **111 parks** across **11 regions** and **32 clusters**
+- Regions: London & South East, South West, Oxford-Cambridge Arc, East Midlands, West Midlands, North West, Yorkshire & Humber, North East, Scotland, Wales, Northern Ireland
 
-## What it does
+## Features
+- **Three-level selection**: Region → Cluster → Individual park
+- **Area reports**: Select all parks in a cluster or entire region — get ranked connectivity table, aggregate opportunities, and individual summaries
+- **Individual park reports**: Full connectivity profile, Companies House tenant analysis, intelligence flags, commercial opportunities
+- **PDF download**: Both area reports and individual reports generate professional PDFs
 
-Select any of the 35 parks in the database. The app automatically pulls:
+## Data Sources
+- Ofcom Connected Nations (July 2024) — broadband and mobile coverage at local authority level
+- Companies House API (free, 600 req/5 min) — active companies registered at park postcodes
+- UKSPA, Wikipedia, individual park websites (February 2026) — park reference data
 
-- **Ofcom connectivity data** — full fibre availability, gigabit coverage, superfast %, no-decent-broadband %, full fibre take-up, average monthly data usage (matched to the park's local authority)
-- **Mobile coverage** — indoor/outdoor 4G and 5G across all operators
-- **Companies House data** — active companies registered at the park's postcode, SIC code sector profiling (requires free CH API key)
+## Deployment
 
-It then:
-- Scores connectivity (0–100) with Red/Amber/Green RAG status
-- Generates specific infrastructure flags based on the data
-- Identifies commercial opportunities tailored to the park's sector and scale
-- Produces a branded PDF report ready to use as outreach material
+### Streamlit Cloud (recommended)
+1. Fork this repository
+2. Go to share.streamlit.io → Create app → select this repo
+3. Set main file: `app.py`
+4. In App Settings → Secrets, add: `CH_API_KEY = "your-companies-house-api-key"`
+5. Deploy
 
-## Files
-
-| File | Purpose |
-|------|---------|
-| `app.py` | Main Streamlit application |
-| `parks_data.json` | Database of 35 Arc parks with postcodes, operators, sectors, local authorities |
-| `area_data.json` | Ofcom + VOA data for all UK local authorities (copy from commercial property app) |
-| `requirements.txt` | Python dependencies |
-
-## Setup
-
-### 1. Clone / upload to GitHub
-
-Upload all four files to a GitHub repository.
-
-### 2. Deploy on Streamlit Cloud
-
-1. Go to [share.streamlit.io](https://share.streamlit.io)
-2. Connect to your GitHub repo
-3. Set main file path: `app.py`
-4. Deploy
-
-### 3. Set password
-
-The default password is `arcreport2026`. To change it, edit line 10 of `app.py`:
-```python
-PASSWORD = "your-new-password"
+### Local
+```bash
+pip install -r requirements.txt
+streamlit run app.py
 ```
 
-### 4. Companies House API key
+## Password
+Default: `sciparks2026` — change in line 12 of app.py
 
-Get a free key at [developer.company-information.service.gov.uk](https://developer.company-information.service.gov.uk). Enter it in the sidebar when using the app. Free tier: 600 requests per 5 minutes.
+## Updating the Park Database
+Edit `uk_science_parks.json`. Structure:
+```json
+{
+  "regions": [{
+    "id": "region_id",
+    "name": "Region Name",
+    "clusters": [{
+      "id": "cluster_id", 
+      "name": "Cluster Name",
+      "parks": [{
+        "id": "park_id",
+        "name": "Park Name",
+        "location": "City, County",
+        "county": "County",
+        "local_authority": "LA name (must match Ofcom dataset)",
+        "postcode": "AB1 2CD",
+        "sector": "Life Sciences, Biotech",
+        "tenants": "100+",
+        "operator": "Operator name",
+        "status": "Established",
+        "notes": "Description",
+        "website": "https://..."
+      }]
+    }]
+  }]
+}
+```
 
-### 5. area_data.json
-
-This file is shared with the commercial property app. Copy it from that repository into this one. Without it, connectivity scores will show as unavailable but the rest of the app functions normally.
-
-## Parks in the database
-
-35 parks across 6 geographic clusters, west to east:
-
-- **Oxford Cluster** — ARC Oxford, Oxford Science Park, Oxford North, Begbroke, Oxford Technology Park, BioEscalator
-- **Oxfordshire** — Milton Park, Harwell Campus, Abingdon Science Park, Culham Campus, Bicester Motion
-- **Buckinghamshire & MK** — Cranfield Technology Park, Silverstone Technology Cluster
-- **Hertfordshire** — Stevenage Bioscience Catalyst, Elevate Quarter, BioPark Hertfordshire
-- **Cambridge North** — Cambridge Science Park, St John's Innovation Centre, Peterhouse Technology Park, Cambridge Research Park, Melbourn Science Park, TusPark
-- **Cambridge South** — Cambridge Biomedical Campus, Babraham, Granta Park, Wellcome Genome Campus, Chesterford Research Park, Haverhill Research Park, Cambourne Park, Unity Campus, South Cambridge Science Centre, The Mill Scitech Park
-
-## Adding parks
-
-Add new entries to `parks_data.json` following the existing format. The critical fields are `postcode` (drives Companies House lookup) and `local_authority` (drives Ofcom data matching).
-
-## Data sources
-
-- Ofcom Connected Nations, July 2024
-- Valuation Office Agency, March 2025  
-- Companies House API (live, free)
-- Park data manually curated from UKSPA, Oxford Calling, Cambridge& and individual park websites, February 2026
+## Notes
+- Ofcom data matches on `local_authority` field — accuracy depends on exact name match with Ofcom dataset
+- Companies House results are registered address lookups — not all tenants will be registered at the park postcode
+- Area reports do not query Companies House (to avoid API rate limits across many parks simultaneously)

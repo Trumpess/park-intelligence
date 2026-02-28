@@ -1,0 +1,373 @@
+{
+  "regions": [
+    {
+      "id": "london_se",
+      "name": "London & South East",
+      "clusters": [
+        {
+          "id": "london",
+          "name": "London",
+          "parks": [
+            {"id":"kcl_guys","name":"Guy's & St Thomas' BRC","location":"Southwark, London","county":"Greater London","local_authority":"Southwark","postcode":"SE1 9RT","sector":"Life Sciences, Clinical Research","tenants":"200+","operator":"King's College London / NHS","status":"Established","notes":"Major translational research hub co-located with Guy's Hospital. NHS/KCL partnership. DSP Toolkit environment.","website":"https://www.guysandstthomaslifehealth.org"},
+            {"id":"whites_city","name":"White City Innovation District","location":"White City, London","county":"Greater London","local_authority":"Hammersmith and Fulham","postcode":"W12 7RZ","sector":"Life Sciences, Deep Tech, AI","tenants":"50+","operator":"Imperial College London / Legal & General","status":"Expanding","notes":"£3bn Imperial-anchored innovation district. MEDI+MAKER, Invention Rooms. White City Place commercial campus adjacent.","website":"https://www.imperial.ac.uk/white-city"},
+            {"id":"kings_cross_ls","name":"King's Cross Life Sciences Hub","location":"King's Cross, London","county":"Greater London","local_authority":"Camden","postcode":"N1C 4AG","sector":"Life Sciences, Biotech","tenants":"20+","operator":"Ashby Capital / Native Land","status":"Emerging","notes":"Former office conversion to life sciences space. Adjacent to Francis Crick Institute.","website":""},
+            {"id":"crick","name":"Francis Crick Institute","location":"King's Cross, London","county":"Greater London","local_authority":"Camden","postcode":"NW1 1AT","sector":"Biomedical Research","tenants":"1,500 researchers","operator":"Francis Crick Institute (MRC/Cancer Research UK/Wellcome/UCL/Imperial/KCL)","status":"Established","notes":"Europe's largest single-site biomedical research facility. 1,500 scientists. Major anchor for London life sciences.","website":"https://www.crick.ac.uk"},
+            {"id":"here_east","name":"Here East","location":"Stratford, London","county":"Greater London","local_authority":"Hackney","postcode":"E20 3BS","sector":"Tech, Digital, Creative","tenants":"30+","operator":"Delancey","status":"Established","notes":"Former Olympic press/broadcast centre. Home to BT Sport, Loughborough University London, UCL East, Ford Smart Mobility.","website":"https://hereeast.com"},
+            {"id":"east_bank","name":"East Bank (UCL East / V&A / Sadler's Wells)","location":"Stratford, London","county":"Greater London","local_authority":"Newham","postcode":"E20 1EN","sector":"Creative, Education, Research","tenants":"Multiple anchor institutions","operator":"GLA / LLDC","status":"Under development","notes":"Major cultural and educational development. UCL East open from 2024. V&A East and Sadler's Wells to follow.","website":"https://eastbank.org.uk"},
+            {"id":"lon_bioscience","name":"London BioScience Innovation Centre","location":"Camden, London","county":"Greater London","local_authority":"Camden","postcode":"NW1 0NH","sector":"Biotech, Life Sciences","tenants":"50+","operator":"MRC / BBSRC","status":"Established","notes":"Co-located with Royal Veterinary College and Camden BioMedical Campus. Strong MRC links.","website":"https://www.lbic.co.uk"}
+          ]
+        },
+        {
+          "id": "surrey_hants",
+          "name": "Surrey & Hampshire",
+          "parks": [
+            {"id":"surrey_rp","name":"Surrey Research Park","location":"Guildford, Surrey","county":"Surrey","local_authority":"Guildford","postcode":"GU2 7YG","sector":"Tech, Life Sciences, Engineering","tenants":"100+","operator":"University of Surrey","status":"Established","notes":"Founded 1985, co-founded UKSPA. 170 acres, home to SSTL (Surrey Satellite Technology). vHive animal health incubator. 2024 UKSPA award winner.","website":"https://surrey-research-park.com"},
+            {"id":"southampton_sp","name":"Southampton Science Park","location":"Chilworth, Southampton","county":"Hampshire","local_authority":"Eastleigh","postcode":"SO16 7NS","sector":"Electronics, IT, Engineering, Life Sciences","tenants":"80+","operator":"University of Southampton / Mountpark","status":"Established","notes":"180 acres, strong University of Southampton links. Home to Promega UK HQ. Recent sustainability-led refurbishment programme.","website":"https://www.science-park.co.uk"},
+            {"id":"langstone_tp","name":"Langstone Technology Park","location":"Havant, Hampshire","county":"Hampshire","local_authority":"Havant","postcode":"PO9 1SA","sector":"Technology, Defence, Engineering","tenants":"30+","operator":"Coltham Developments","status":"Established","notes":"Established tech park with strong defence sector presence. Close to Portsmouth naval base.","website":"https://www.langstonetechnologypark.co.uk"},
+            {"id":"reading_stc","name":"University of Reading Science & Technology Centre","location":"Reading, Berkshire","county":"Berkshire","local_authority":"Reading","postcode":"RG6 6BU","sector":"Food Science, Environmental, IT","tenants":"40+","operator":"University of Reading","status":"Established","notes":"Strong agri-food and environmental science focus. Links to BBSRC-funded research at Reading.","website":"https://www.reading.ac.uk"}
+          ]
+        },
+        {
+          "id": "kent_essex",
+          "name": "Kent & Essex",
+          "parks": [
+            {"id":"discovery_park","name":"Discovery Park","location":"Sandwich, Kent","county":"Kent","local_authority":"Dover","postcode":"CT13 9ND","sector":"Life Sciences, Pharma, Biotech","tenants":"65+","operator":"Discovery Park Ltd","status":"Established","notes":"Former Pfizer global R&D campus. 3m sq ft. Enterprise Zone. Major life sciences cluster.","website":"https://www.discoverypark.co.uk"},
+            {"id":"kent_sp","name":"Kent Science Park","location":"Sittingbourne, Kent","county":"Kent","local_authority":"Swale","postcode":"ME9 8EF","sector":"Life Sciences, Pharma, Engineering","tenants":"70+","operator":"Kent Science Park Ltd","status":"Established","notes":"One of the UK's longest-established science parks. Strong pharma and life sciences focus.","website":"https://www.kentsciencepark.co.uk"},
+            {"id":"essex_rp","name":"University of Essex Research Park","location":"Colchester, Essex","county":"Essex","local_authority":"Colchester","postcode":"CO4 3SQ","sector":"Data, AI, Computing, Social Science","tenants":"20+","operator":"University of Essex","status":"Established","notes":"Links to Essex Data Analytics research. Growing AI and computational science cluster.","website":"https://www.essex.ac.uk"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "south_west",
+      "name": "South West",
+      "clusters": [
+        {
+          "id": "bristol_bath",
+          "name": "Bristol & Bath",
+          "parks": [
+            {"id":"bristol_bath_sp","name":"Bristol & Bath Science Park","location":"Emersons Green, Bristol","county":"South Gloucestershire","local_authority":"South Gloucestershire","postcode":"BS16 7FR","sector":"Digital, Creative, Life Sciences, Advanced Engineering","tenants":"120+","operator":"UWE Bristol / Aequitas","status":"Established","notes":"110 acres. National Composites Centre nearby. Strong West of England Combined Authority support.","website":"https://www.bbsp.co.uk"},
+            {"id":"future_space","name":"Future Space","location":"Stoke Gifford, Bristol","county":"South Gloucestershire","local_authority":"South Gloucestershire","postcode":"BS34 8LP","sector":"Deep Tech, Space, Quantum, AI","tenants":"50+","operator":"UWE Bristol","status":"Established","notes":"Deep tech incubator co-located with BBSP. High-tech labs, cleanrooms. Strong aerospace and quantum computing links.","website":"https://www.futurespace.co.uk"},
+            {"id":"bath_quays","name":"Bath Quays North Innovation","location":"Bath","county":"Bath and North East Somerset","local_authority":"Bath and North East Somerset","postcode":"BA1 1SX","sector":"Digital, Creative, Professional Services","tenants":"30+","operator":"Bath & North East Somerset Council","status":"Established","notes":"Regeneration-led innovation hub in central Bath. University of Bath proximity.","website":"https://www.bathquays.co.uk"}
+          ]
+        },
+        {
+          "id": "exeter_devon",
+          "name": "Exeter & Devon",
+          "parks": [
+            {"id":"exeter_sp","name":"Exeter Science Park","location":"Exeter, Devon","county":"Devon","local_authority":"East Devon","postcode":"EX5 2FN","sector":"Environmental, Digital, Life Sciences, Space","tenants":"50+","operator":"Exeter Science Park Ltd","status":"Established","notes":"Strong environmental science and Met Office links. Growing space tech cluster.","website":"https://www.exeterscience.com"},
+            {"id":"plymouth_sp","name":"Plymouth Science Park","location":"Plymouth, Devon","county":"Devon","local_authority":"Plymouth","postcode":"PL6 8BX","sector":"Marine, Defence, Life Sciences, Digital","tenants":"60+","operator":"Plymouth Science Park Ltd","status":"Established","notes":"Strong marine technology and defence focus. Close to DSTL and Plymouth University.","website":"https://www.plymouthsciencepark.com"},
+            {"id":"epic_paignton","name":"Electronics & Photonics Innovation Centre (EPIC)","location":"Paignton, Devon","county":"Devon","local_authority":"Torbay","postcode":"TQ4 7AU","sector":"Electronics, Photonics, Advanced Manufacturing","tenants":"15+","operator":"South Devon College / Torbay Council","status":"Established","notes":"Specialist electronics and photonics hub serving South Devon advanced manufacturing sector.","website":""}
+          ]
+        },
+        {
+          "id": "dorset_wilts",
+          "name": "Dorset & Wiltshire",
+          "parks": [
+            {"id":"dorset_innov","name":"Dorset Innovation Park","location":"Winfrith, Dorset","county":"Dorset","local_authority":"Dorset","postcode":"BH20 6AA","sector":"Nuclear, Environmental, Energy, Defence","tenants":"40+","operator":"Dorset LEP / Dorset Council","status":"Established","notes":"Former nuclear research site (UKAEA). Strong energy and nuclear decommissioning expertise. Enterprise Zone.","website":"https://www.dorsetinnovationpark.co.uk"},
+            {"id":"porton_down","name":"Porton Down / Porton Science Park","location":"Porton, Wiltshire","county":"Wiltshire","local_authority":"Wiltshire","postcode":"SP4 0JQ","sector":"Defence, Life Sciences, Chemical/Bio Detection","tenants":"30+","operator":"DSTL / Porton Biopharma","status":"Established","notes":"Sensitive defence R&D site. Porton Biopharma spinout park adjacent. High biosecurity environment.","website":"https://www.porton-science.co.uk"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "arc",
+      "name": "Oxford-Cambridge Arc",
+      "clusters": [
+        {
+          "id": "oxford_city",
+          "name": "Oxford Cluster",
+          "parks": [
+            {"id":"arc_oxford","name":"ARC Oxford (Brookfield)","location":"Oxford","county":"Oxfordshire","local_authority":"Oxford","postcode":"OX3 7LD","sector":"Life Sciences, Biotech, Deep Tech","tenants":"3,500+ members","operator":"ARC Club","status":"Expanding","notes":"£1bn+ regeneration. 3,500+ community members. Largest innovation community in Oxford. Flexible workspace model.","website":"https://www.joinarcclub.com"},
+            {"id":"oxford_sp","name":"Oxford Science Park","location":"Oxford","county":"Oxfordshire","local_authority":"Oxford","postcode":"OX4 4GA","sector":"Life Sciences, IT, Biotech","tenants":"60+","operator":"Magdalen College / MEPC","status":"Established","notes":"Magdalen College development. 600,000 sq ft expansion by 2026. Strong pharma and biotech cluster.","website":"https://www.oxfordsp.com"},
+            {"id":"oxford_north","name":"Oxford North Innovation District","location":"Oxford","county":"Oxfordshire","local_authority":"Oxford","postcode":"OX2 6HT","sector":"Life Sciences, Tech, Creative","tenants":"Emerging","operator":"St John's College / Thomas White Oxford","status":"Under development","notes":"£1.2bn development. Minister for Science endorsed. 480,000 sq ft lab/office planned. Major Arc anchor investment.","website":"https://www.oxfordnorth.com"},
+            {"id":"begbroke","name":"Begbroke Science Park","location":"Begbroke, Oxfordshire","county":"Oxfordshire","local_authority":"Cherwell","postcode":"OX5 1PF","sector":"Materials, Engineering, Early-Stage","tenants":"40+","operator":"University of Oxford","status":"Established","notes":"University of Oxford early-stage spinout incubator. Strong materials science and engineering focus.","website":"https://www.begbroke.ox.ac.uk"},
+            {"id":"oxford_tech_park","name":"Oxford Technology Park","location":"Kidlington, Oxfordshire","county":"Oxfordshire","local_authority":"Cherwell","postcode":"OX5 1GD","sector":"Life Sciences, Tech, Biotech","tenants":"20+","operator":"Goodman","status":"Established","notes":"400,000 sq ft. Premium lab and office campus north of Oxford. Strong bio and tech sector mix.","website":"https://www.oxfordtechnologypark.com"},
+            {"id":"bioescalator","name":"BioEscalator","location":"Oxford","county":"Oxfordshire","local_authority":"Oxford","postcode":"OX3 7FZ","sector":"Biomedical, Life Sciences, Early-Stage","tenants":"30+","operator":"University of Oxford Innovation","status":"Established","notes":"University of Oxford biomedical incubator. Flexible wet lab provision for early-stage spinouts. Strong IP pipeline.","website":"https://www.bioescalator.co.uk"}
+          ]
+        },
+        {
+          "id": "oxfordshire",
+          "name": "Oxfordshire",
+          "parks": [
+            {"id":"milton_park","name":"Milton Park","location":"Abingdon, Oxfordshire","county":"Oxfordshire","local_authority":"Vale of White Horse","postcode":"OX14 4RQ","sector":"Life Sciences, IT, Pharma, Biotech","tenants":"270+","operator":"MEPC","status":"Established","notes":"One of Europe's largest business parks. 9,000 people, 270+ companies. Major life sciences cluster. Oxford Biomedica, RM, others.","website":"https://www.miltonpark.com"},
+            {"id":"harwell","name":"Harwell Campus","location":"Harwell, Oxfordshire","county":"Oxfordshire","local_authority":"Vale of White Horse","postcode":"OX11 0QX","sector":"Space, Nuclear, Energy, Computing, Life Sciences","tenants":"250+","operator":"UKAEA / STFC / Brookfield","status":"Established","notes":"National science campus. 5m sq ft masterplan. Home to STFC, Diamond Light Source, ISIS Neutron Source, Space Park. UK's most successful science campus (UKSPA 2024).","website":"https://www.harwellcampus.com"},
+            {"id":"abingdon_sp","name":"Abingdon Science Park","location":"Abingdon, Oxfordshire","county":"Oxfordshire","local_authority":"Vale of White Horse","postcode":"OX14 3YS","sector":"Life Sciences, Medical Devices","tenants":"20+","operator":"Magdalen College / Oxford Instruments","status":"Established","notes":"Compact life sciences park proximate to Milton Park. Primarily medical devices and diagnostics.","website":""},
+            {"id":"culham","name":"Culham Campus","location":"Culham, Oxfordshire","county":"Oxfordshire","local_authority":"South Oxfordshire","postcode":"OX14 3DB","sector":"Fusion Energy, Advanced Engineering, Nuclear","tenants":"50+","operator":"UKAEA","status":"Established","notes":"UKAEA fusion energy research site. Home to ITER UK, Tokamak Energy, First Light Fusion. UK's leading fusion energy cluster.","website":"https://www.culhamparkland.com"},
+            {"id":"bicester_motion","name":"Bicester Motion","location":"Bicester, Oxfordshire","county":"Oxfordshire","local_authority":"Cherwell","postcode":"OX27 8AL","sector":"Future Mobility, Automotive, Aerospace","tenants":"50+","operator":"Bicester Heritage / IM Group","status":"Expanding","notes":"Future mobility innovation campus on former RAF Bicester. Automotive, aerospace, EV, autonomous vehicles. Heritage and cutting-edge mix.","website":"https://www.bicestermotion.com"}
+          ]
+        },
+        {
+          "id": "bucks_mk",
+          "name": "Buckinghamshire & Milton Keynes",
+          "parks": [
+            {"id":"cranfield_tp","name":"Cranfield University Technology Park","location":"Cranfield, Bedfordshire","county":"Bedfordshire","local_authority":"Central Bedfordshire","postcode":"MK43 0AL","sector":"Aerospace, Automotive, Defence, Engineering","tenants":"70+","operator":"Cranfield University","status":"Established","notes":"Only UK university with its own airfield and airport. Aerospace and automotive engineering hub. Proximity to Mercedes AMG F1.","website":"https://www.cranfield.ac.uk"},
+            {"id":"silverstone_tc","name":"Silverstone Technology Cluster","location":"Silverstone, Northamptonshire","county":"Northamptonshire","local_authority":"West Northamptonshire","postcode":"NN12 8TN","sector":"Motorsport, Advanced Engineering, Defence, Automotive","tenants":"70+","operator":"MEPC","status":"Established","notes":"Heart of the UK's Motorsport Valley. F1 teams, Cosworth, aerodynamics, composites. Growing defence tech cluster.","website":"https://www.silverstonetechnologycluster.co.uk"},
+            {"id":"mk_dome","name":"Bletchley Park / NCSC-linked Innovation","location":"Milton Keynes","county":"Buckinghamshire","local_authority":"Milton Keynes","postcode":"MK3 6EB","sector":"Cybersecurity, AI, Digital","tenants":"Emerging","operator":"Various / MK Council","status":"Emerging","notes":"Growing cybersecurity cluster around Milton Keynes leveraging Bletchley Park heritage and NCSC proximity.","website":""}
+          ]
+        },
+        {
+          "id": "herts_beds",
+          "name": "Hertfordshire & Bedfordshire",
+          "parks": [
+            {"id":"stevenage_bc","name":"Stevenage Bioscience Catalyst","location":"Stevenage, Hertfordshire","county":"Hertfordshire","local_authority":"Stevenage","postcode":"SG1 2FX","sector":"Life Sciences, Cell & Gene Therapy, Pharma","tenants":"50+","operator":"Stevenage Bioscience Catalyst","status":"Established","notes":"Life Sciences Opportunity Zone. Co-located with GSK Global R&D and Cell & Gene Therapy Catapult. Premier UK cell therapy cluster.","website":"https://www.stevenage-bc.com"},
+            {"id":"elevate_quarter","name":"Elevate Quarter Stevenage","location":"Stevenage, Hertfordshire","county":"Hertfordshire","local_authority":"Stevenage","postcode":"SG1 2EX","sector":"Life Sciences, Biotech","tenants":"Emerging","operator":"UBS Asset Management / Reef","status":"Under development","notes":"1.6m sq ft planned — one of Europe's largest life science campuses. Planning approved 2024. Adjacent to GSK and Bioscience Catalyst.","website":""},
+            {"id":"biopark_herts","name":"BioPark Hertfordshire","location":"Welwyn Garden City, Hertfordshire","county":"Hertfordshire","local_authority":"Welwyn Hatfield","postcode":"AL7 3AX","sector":"Life Sciences, Biotech, Medical Devices","tenants":"30+","operator":"University of Hertfordshire","status":"Established","notes":"University of Hertfordshire-operated life sciences incubator. Good proximity to London and Cambridge.","website":"https://www.bioparkHertfordshire.com"},
+            {"id":"colworth_sp","name":"Colworth Science Park","location":"Sharnbrook, Bedfordshire","county":"Bedfordshire","local_authority":"Bedford","postcode":"MK44 1LQ","sector":"Food Science, FMCG, Life Sciences","tenants":"30+","operator":"Unilever / Bidwells","status":"Established","notes":"Former Unilever R&D site. Strong food science and FMCG focus. Unique sector positioning within Arc.","website":"https://www.colworthpark.co.uk"}
+          ]
+        },
+        {
+          "id": "cambridge_north",
+          "name": "Cambridge Cluster – North",
+          "parks": [
+            {"id":"cambridge_sp","name":"Cambridge Science Park","location":"Cambridge","county":"Cambridgeshire","local_authority":"Cambridge","postcode":"CB4 0GF","sector":"ICT, Deep Tech, AI, Life Sciences","tenants":"130+","operator":"Trinity College Cambridge","status":"Established","notes":"UK's first science park (1970). 130+ companies including Darktrace, Qualcomm, Samsung, Raspberry Pi. 30,000 sq ft expansion planned.","website":"https://www.cambridgesciencepark.co.uk"},
+            {"id":"stjohns_ic","name":"St John's Innovation Centre","location":"Cambridge","county":"Cambridgeshire","local_authority":"Cambridge","postcode":"CB4 0WS","sector":"Deep Tech, Biotech, AI, Early-Stage","tenants":"80+","operator":"St John's College Cambridge","status":"Established","notes":"Long-established incubator. 80+ firms. Strong early-stage and spinout focus. SETsquared partner.","website":"https://www.stjohns.co.uk/innovation-centre"},
+            {"id":"peterhouse_tp","name":"Peterhouse Technology Park","location":"Cambridge","county":"Cambridgeshire","local_authority":"Cambridge","postcode":"CB2 1TN","sector":"Semiconductors, Deep Tech, ICT","tenants":"20+","operator":"Peterhouse Cambridge","status":"Established","notes":"Arm Holdings anchor tenant. 350,000 sq ft. Semiconductor and chip design cluster.","website":"https://www.peterhousetp.com"},
+            {"id":"cambridge_rp_waterbeach","name":"Cambridge Research Park Waterbeach","location":"Waterbeach, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"CB25 9PB","sector":"Mixed Tech, Biotech","tenants":"40+","operator":"Bruntwood SciTech / Brookgate","status":"Established","notes":"Out-of-city campus on A10 corridor. Growing lab and office provision. Near planned Waterbeach new town.","website":"https://www.cambridgeresearchpark.co.uk"},
+            {"id":"melbourn_sp","name":"Melbourn Science Park","location":"Melbourn, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"SG8 6DP","sector":"Life Sciences, Biotech, Diagnostics","tenants":"30+","operator":"Bruntwood SciTech","status":"Redeveloping","notes":"390,000 sq ft Bruntwood SciTech redevelopment. Growing life sciences cluster. Strong diagnostics sector.","website":"https://www.bruntwood.co.uk/scitech"},
+            {"id":"tuspark_cambridge","name":"TusPark Cambridge","location":"Cambridge","county":"Cambridgeshire","local_authority":"Cambridge","postcode":"CB4 0FZ","sector":"ICT, Life Sciences, AI","tenants":"20+","operator":"Tsinghua University Holdings","status":"Established","notes":"Part of global Tsinghua University science park network. China-UK innovation bridge. AI and biotech focus.","website":"https://www.tuspark.com"}
+          ]
+        },
+        {
+          "id": "cambridge_south",
+          "name": "Cambridge Cluster – South",
+          "parks": [
+            {"id":"cambridge_biomedical","name":"Cambridge Biomedical Campus","location":"Cambridge","county":"Cambridgeshire","local_authority":"Cambridge","postcode":"CB2 0AW","sector":"Biomedical, Clinical Research, Pharma","tenants":"24,000+ employees","operator":"Multiple (NHS Trust, University of Cambridge, AstraZeneca)","status":"Established","notes":"Europe's largest medical research campus. Addenbrooke's, Royal Papworth, AstraZeneca HQ, Cancer Research UK, New Cambridge South station under construction.","website":"https://www.cambridgebiomedical.co.uk"},
+            {"id":"babraham","name":"Babraham Research Campus","location":"Babraham, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"CB22 3AT","sector":"Biomedical, Life Sciences, Genomics","tenants":"60+","operator":"Babraham Institute / Babraham Bioscience Technologies","status":"Established","notes":"Bench-to-business model. £1.2bn investment attracted. Strong immunology, epigenetics, metabolomics. 60+ biomedical orgs.","website":"https://www.babraham.ac.uk"},
+            {"id":"granta_park","name":"Granta Park","location":"Great Abington, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"CB21 6AL","sector":"Life Sciences, Pharma, CRO","tenants":"30+","operator":"ABRDN","status":"Established","notes":"160 acres. Premium life sciences campus. Illumina, Gilead, Napp, Axol Bioscience. Managed service model.","website":"https://www.grantapark.com"},
+            {"id":"wellcome_genome","name":"Wellcome Genome Campus","location":"Hinxton, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"CB10 1SD","sector":"Genomics, Bioinformatics, Biotech","tenants":"40+","operator":"Genome Research Ltd / Wellcome Trust","status":"Expanding","notes":"World-leading genomics hub. Sanger Institute sequenced 1/3 of first human genome. 440-acre expansion with hundreds of millions of Wellcome investment.","website":"https://www.wellcomegenomecampus.org"},
+            {"id":"chesterford_rp","name":"Chesterford Research Park","location":"Saffron Walden, Essex","county":"Essex","local_authority":"Uttlesford","postcode":"CB10 1XL","sector":"Life Sciences, CRO, Pharma","tenants":"20+","operator":"Aviva Investors / Uttlesford DC","status":"Established","notes":"250 acres. Charles River, Illumina. 3 miles from Wellcome Genome Campus. Enterprise Zone.","website":"https://www.chesterfordresearchpark.co.uk"},
+            {"id":"cambourne_park","name":"Cambourne Park","location":"Cambourne, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"CB23 6DW","sector":"Life Sciences, Medtech, ICT","tenants":"60+","operator":"Life Science REIT","status":"Established","notes":"60+ companies including Carl Zeiss, MediaTek. Life Science REIT-managed. Growing medtech cluster west of Cambridge.","website":"https://www.cambournepark.com"},
+            {"id":"unity_campus","name":"Unity Campus","location":"Pampisford, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"CB22 3GE","sector":"Life Sciences, Biotech, Early-Stage","tenants":"20+","operator":"Howard Group","status":"Established","notes":"Boutique science campus south of Cambridge. Early-stage and spinout focus. Sustainable design ethos.","website":"https://www.unitycampus.co.uk"},
+            {"id":"south_cambs_sc","name":"South Cambridge Science Centre","location":"Pampisford, Cambridgeshire","county":"Cambridgeshire","local_authority":"South Cambridgeshire","postcode":"CB22 3JE","sector":"Life Sciences, Clean Tech","tenants":"Emerging","operator":"Various","status":"Emerging","notes":"Emerging campus. 145,000 sq ft Phase 1. Net Zero target. Life sciences and clean tech focus.","website":""},
+            {"id":"norwich_rp","name":"Norwich Research Park","location":"Colney, Norfolk","county":"Norfolk","local_authority":"Broadland","postcode":"NR4 7TJ","sector":"Food, Agri, Environmental, Biomedical","tenants":"50+","operator":"Norwich Research Park Ltd","status":"Established","notes":"Europe's leading agri-food and environmental research cluster. John Innes Centre, Sainsbury Lab, Earlham Institute, Quadram Institute all on-site.","website":"https://www.norwichresearchpark.ac.uk"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "east_midlands",
+      "name": "East Midlands",
+      "clusters": [
+        {
+          "id": "nottingham",
+          "name": "Nottingham",
+          "parks": [
+            {"id":"biocity_nottm","name":"BioCity Nottingham","location":"Nottingham","county":"Nottinghamshire","local_authority":"Nottingham","postcode":"NG1 1GF","sector":"Life Sciences, Biotech, Pharma","tenants":"50+","operator":"Federated Hermes / Nottingham Trent University","status":"Established","notes":"Major life sciences incubator. MediCity co-located. Strong pharma cluster. Boots, AstraZeneca alumni.","website":"https://www.biocity.co.uk"},
+            {"id":"medicity","name":"MediCity Nottingham","location":"Nottingham","county":"Nottinghamshire","local_authority":"Nottingham","postcode":"NG90 1BS","sector":"Medical Devices, Diagnostics, Digital Health","tenants":"30+","operator":"Nottingham Trent University / NHS","status":"Established","notes":"Medical devices and diagnostics specialist. MHRA proximity. NHS digital health innovation.","website":"https://www.medicity.co.uk"},
+            {"id":"nottm_scitech","name":"Nottingham Science and Technology Park","location":"Nottingham","county":"Nottinghamshire","local_authority":"Nottingham","postcode":"NG7 2PZ","sector":"ICT, Engineering, Life Sciences","tenants":"40+","operator":"Nottingham City Council / EMDA","status":"Established","notes":"University of Nottingham-linked park. Strong engineering and ICT focus.","website":""},
+            {"id":"nottm_uoi","name":"University of Nottingham Innovation Park","location":"Nottingham","county":"Nottinghamshire","local_authority":"Broxtowe","postcode":"NG7 2TU","sector":"Life Sciences, Engineering, Digital","tenants":"30+","operator":"University of Nottingham","status":"Established","notes":"On-campus innovation park. Close links to Boots Centre for Pharmacy. Strong pharmaceutical research.","website":"https://www.nottingham.ac.uk/innovation-park"}
+          ]
+        },
+        {
+          "id": "loughborough_leicester",
+          "name": "Loughborough & Leicester",
+          "parks": [
+            {"id":"lusep","name":"Loughborough University Science & Enterprise Park","location":"Loughborough, Leicestershire","county":"Leicestershire","local_authority":"Charnwood","postcode":"LE11 3TU","sector":"Sports Science, Advanced Engineering, Materials","tenants":"60+","operator":"Loughborough University","status":"Established","notes":"Adjacent to 2012 Olympic legacy facility. Sports technology and advanced materials cluster. Home to National Centre for Sport and Exercise Medicine.","website":"https://www.lboro.ac.uk/enterprise/lusep"},
+            {"id":"leicester_innovation","name":"Leicester Innovation Hub","location":"Leicester","county":"Leicestershire","local_authority":"Leicester","postcode":"LE1 7RH","sector":"Space, Digital, Life Sciences","tenants":"20+","operator":"University of Leicester","status":"Established","notes":"Space science focus — University of Leicester built instruments for Mars/space missions. Growing digital innovation cluster.","website":""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "west_midlands",
+      "name": "West Midlands",
+      "clusters": [
+        {
+          "id": "birmingham",
+          "name": "Birmingham",
+          "parks": [
+            {"id":"bham_rp","name":"Birmingham Research Park","location":"Edgbaston, Birmingham","county":"West Midlands","local_authority":"Birmingham","postcode":"B15 2SQ","sector":"Life Sciences, Engineering, Digital","tenants":"30+","operator":"University of Birmingham","status":"Established","notes":"University of Birmingham-linked park. Growing health tech cluster. Proximity to Queen Elizabeth Hospital Birmingham.","website":"https://www.birmingham.ac.uk/research-park"},
+            {"id":"bham_sp_aston","name":"Birmingham Science Park Aston","location":"Aston, Birmingham","county":"West Midlands","local_authority":"Birmingham","postcode":"B7 4BJ","sector":"Digital, Creative, Advanced Manufacturing","tenants":"60+","operator":"Birmingham City Council / Aston University","status":"Established","notes":"City-centre innovation district. Strong digital and creative sector. Aston University proximity.","website":"https://www.bhamsp.co.uk"},
+            {"id":"arden_cross","name":"Arden Cross","location":"Solihull, West Midlands","county":"West Midlands","local_authority":"Solihull","postcode":"B37 7GN","sector":"Life Sciences, Medical Tech, Innovation","tenants":"Emerging","operator":"Arden Cross Ltd","status":"Under development","notes":"£3.2bn mixed-use development adjacent to Birmingham Airport and HS2 Interchange. MOU with UHB and University of Warwick for medical campus.","website":"https://www.ardencross.com"}
+          ]
+        },
+        {
+          "id": "coventry_warwick",
+          "name": "Coventry & Warwickshire",
+          "parks": [
+            {"id":"warwick_sp","name":"University of Warwick Science Park","location":"Coventry","county":"West Midlands","local_authority":"Coventry","postcode":"CV4 7EZ","sector":"Engineering, Automotive, Digital, Life Sciences","tenants":"100+","operator":"University of Warwick","status":"Established","notes":"Major Midlands innovation hub. Three sites: Coventry, Warwick, and Blythe Valley. Strong automotive and engineering cluster. Wellesbourne Campus.","website":"https://www.warwicksciencepark.co.uk"},
+            {"id":"coventry_utp","name":"Coventry University Technology Park","location":"Coventry","county":"West Midlands","local_authority":"Coventry","postcode":"CV1 5FB","sector":"Automotive, Advanced Manufacturing, Digital","tenants":"40+","operator":"Coventry University","status":"Established","notes":"City-centre innovation hub. Strong EV and connected vehicles focus. MTC proximity.","website":"https://www.coventry.ac.uk"}
+          ]
+        },
+        {
+          "id": "staffordshire_worcestershire",
+          "name": "Staffordshire & Worcestershire",
+          "parks": [
+            {"id":"keele_sip","name":"Keele University Science & Innovation Park","location":"Keele, Staffordshire","county":"Staffordshire","local_authority":"Newcastle-under-Lyme","postcode":"ST5 5NL","sector":"Life Sciences, Energy, Digital Health","tenants":"50+","operator":"Keele University","status":"Established","notes":"70 acres. 2024 UKSPA Sustainability Award winner. Smart energy campus — first net zero-ready science park. Keele Innovation District in development.","website":"https://www.keele.ac.uk/scipark"},
+            {"id":"staffs_tp","name":"Staffordshire Technology Park","location":"Stafford","county":"Staffordshire","local_authority":"Stafford","postcode":"ST18 0AR","sector":"Engineering, Defence, Digital","tenants":"30+","operator":"Staffordshire County Council","status":"Established","notes":"Established technology park serving Staffordshire's engineering and defence sectors.","website":""},
+            {"id":"malvern_sp","name":"Malvern Hills Science Park","location":"Malvern, Worcestershire","county":"Worcestershire","local_authority":"Malvern Hills","postcode":"WR14 3SZ","sector":"Cyber, Defence Electronics, Radar, AI","tenants":"40+","operator":"Malvern Hills Science Park Ltd","status":"Established","notes":"QinetiQ and GCHQ proximity. Strong cyber and defence electronics cluster. Radar and electronic warfare expertise.","website":"https://www.malvernhills-sciencepark.co.uk"},
+            {"id":"wolverhampton_sp","name":"Wolverhampton Science Park","location":"Wolverhampton","county":"West Midlands","local_authority":"Wolverhampton","postcode":"WV10 9RU","sector":"Digital, Advanced Manufacturing, Creative","tenants":"50+","operator":"University of Wolverhampton","status":"Established","notes":"Creative Industries Centre celebrated 20th anniversary 2024. Strong digital and advanced manufacturing focus.","website":"https://www.wolverhamptonsciencepark.co.uk"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "north_west",
+      "name": "North West",
+      "clusters": [
+        {
+          "id": "manchester",
+          "name": "Greater Manchester",
+          "parks": [
+            {"id":"manchester_sp","name":"Manchester Science Park","location":"Manchester","county":"Greater Manchester","local_authority":"Manchester","postcode":"M15 6SZ","sector":"Digital, Biotech, Life Sciences, Fintech","tenants":"100+","operator":"Manchester Science Partnerships","status":"Established","notes":"City-centre innovation quarter. Citylabs 1.0 and Citylabs 2.0 life sciences. STEAMhouse. Atom Valley initiative nearby.","website":"https://www.manchestersciencepark.co.uk"},
+            {"id":"alderley_park","name":"Alderley Park","location":"Alderley Edge, Cheshire","county":"Cheshire East","local_authority":"Cheshire East","postcode":"SK10 4TG","sector":"Life Sciences, Pharma, Biotech","tenants":"60+","operator":"Bruntwood SciTech","status":"Established","notes":"Former AstraZeneca global R&D campus. 400 acres, largest single-site life science campus outside London. Biotech catalyst hub.","website":"https://www.alderleypark.co.uk"}
+          ]
+        },
+        {
+          "id": "liverpool",
+          "name": "Liverpool City Region",
+          "parks": [
+            {"id":"liverpool_sp","name":"Liverpool Science Park","location":"Liverpool","county":"Merseyside","local_authority":"Liverpool","postcode":"L3 5TF","sector":"Life Sciences, Biotech, Digital","tenants":"50+","operator":"Liverpool City Council / University of Liverpool","status":"Established","notes":"Knowledge Quarter Liverpool. Strong life sciences. University of Liverpool and Liverpool John Moores proximity.","website":"https://www.liverpoolsciencepark.co.uk"},
+            {"id":"liverpool_innov","name":"Liverpool Innovation Park","location":"Liverpool","county":"Merseyside","local_authority":"Liverpool","postcode":"L7 9NJ","sector":"Digital, Advanced Manufacturing, Tech","tenants":"40+","operator":"Liverpool City Council","status":"Established","notes":"City-based innovation park. Growing digital cluster. Edge Hill / LJMU proximity.","website":""},
+            {"id":"merseybio","name":"MerseyBio","location":"Liverpool","county":"Merseyside","local_authority":"Liverpool","postcode":"L7 8TX","sector":"Biotech, Life Sciences, Early-Stage","tenants":"20+","operator":"University of Liverpool","status":"Established","notes":"Specialist biotech incubator. Early-stage biotech and life sciences focus. Strong University of Liverpool links.","website":""},
+            {"id":"scitech_daresbury","name":"Sci-Tech Daresbury","location":"Daresbury, Cheshire","county":"Cheshire","local_authority":"Halton","postcode":"WA4 4AD","sector":"AI, Quantum, Industrial Biotech, Health Tech","tenants":"120+","operator":"STFC / Langtree / Scitech","status":"Established","notes":"National science campus. Home to STFC Hartree Centre (HPC/AI), national quantum hub. 120+ companies. Liverpool City Region anchor.","website":"https://sci-techdaresbury.com"},
+            {"id":"heath_btp","name":"The Heath Business & Technical Park","location":"Runcorn, Cheshire","county":"Cheshire","local_authority":"Halton","postcode":"WA7 4QX","sector":"Chemicals, Environmental, Engineering","tenants":"60+","operator":"The Heath Business Park Ltd","status":"Established","notes":"Former ICI chemicals research site. Strong environmental and industrial chemistry cluster.","website":"https://www.theheathpark.com"}
+          ]
+        },
+        {
+          "id": "lancaster_cumbria",
+          "name": "Lancashire & Cumbria",
+          "parks": [
+            {"id":"lancaster_sp","name":"Lancaster Science Park","location":"Lancaster","county":"Lancashire","local_authority":"Lancaster","postcode":"LA1 4WY","sector":"Health, Digital, Environmental","tenants":"30+","operator":"Lancaster University","status":"Established","notes":"Lancaster University-linked campus. Health innovation and environmental science focus.","website":"https://www.lancastersciencepark.co.uk"},
+            {"id":"westlakes","name":"Westlakes Science & Technology Park","location":"Moor Row, Cumbria","county":"Cumbria","local_authority":"Copeland","postcode":"CA24 3JY","sector":"Nuclear, Energy, Environmental","tenants":"30+","operator":"Nuclear Decommissioning Authority","status":"Established","notes":"Sellafield proximity. Nuclear decommissioning and new nuclear tech. Unique sector concentration.","website":"https://www.westlakes-stpark.co.uk"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yorkshire",
+      "name": "Yorkshire & Humber",
+      "clusters": [
+        {
+          "id": "leeds_bradford",
+          "name": "Leeds & Bradford",
+          "parks": [
+            {"id":"leeds_ic","name":"Leeds Innovation Centre","location":"Leeds","county":"West Yorkshire","local_authority":"Leeds","postcode":"LS2 9PX","sector":"Digital, Life Sciences, Healthcare","tenants":"40+","operator":"University of Leeds / Leeds City Council","status":"Established","notes":"City-centre innovation hub. University of Leeds proximity. Strong health innovation and digital cluster. Leeds Teaching Hospitals NHS Trust nearby.","website":"https://www.leedsinnovationcentre.co.uk"}
+          ]
+        },
+        {
+          "id": "sheffield",
+          "name": "Sheffield City Region",
+          "parks": [
+            {"id":"sheffield_tp","name":"Sheffield Technology Parks","location":"Sheffield","county":"South Yorkshire","local_authority":"Sheffield","postcode":"S1 4DP","sector":"Advanced Manufacturing, Digital, AI","tenants":"50+","operator":"Sheffield Technology Parks Ltd","status":"Evolving","notes":"2-year Innovation Spine project underway (2024). Collaboration: Sheffield/Hallam universities, City Council, SYMCA. Major city-centre innovation corridor in planning.","website":"https://www.sheffieldtechnologyparks.co.uk"},
+            {"id":"amc_sheffield","name":"Advanced Manufacturing Innovation District (AMID)","location":"Rotherham / Sheffield","county":"South Yorkshire","local_authority":"Rotherham","postcode":"S60 5WG","sector":"Advanced Manufacturing, Robotics, Composites","tenants":"30+","operator":"AMRC / University of Sheffield / SYMCA","status":"Established","notes":"Home to AMRC (Boeing-funded), Nuclear AMRC, Royce Institute. National centre for advanced manufacturing and aerospace.","website":"https://www.amrc.co.uk"}
+          ]
+        },
+        {
+          "id": "york",
+          "name": "York & North Yorkshire",
+          "parks": [
+            {"id":"york_sp","name":"York Science Park","location":"York","county":"North Yorkshire","local_authority":"York","postcode":"YO10 5DG","sector":"Biosciences, Robotics, Environmental, Digital","tenants":"50+","operator":"York Science Park Ltd","status":"Established","notes":"Strong University of York links. Biorenewables Development Centre, Plasma Research Centre, Nanocentre. N8 Research Partnership member.","website":"https://www.yorksciencepark.co.uk"},
+            {"id":"nafic","name":"National Agri-Food Innovation Campus","location":"York","county":"North Yorkshire","local_authority":"York","postcode":"YO10 5DD","sector":"Agri-Food, Biorenewables, Food Science","tenants":"20+","operator":"University of York / BBSRC / DEFRA","status":"Established","notes":"UK's leading agri-food innovation campus. Biorenewables focus. Strong DEFRA and BBSRC links.","website":""},
+            {"id":"wilton_centre","name":"Wilton Centre","location":"Redcar, North Yorkshire","county":"North Yorkshire","local_authority":"Redcar and Cleveland","postcode":"TS10 4RF","sector":"Chemicals, Energy, Process Industry","tenants":"20+","operator":"Sembcorp","status":"Established","notes":"Former ICI research site. Process industry and energy focus. Teesside industrial cluster.","website":"https://www.wiltoncentre.co.uk"}
+          ]
+        },
+        {
+          "id": "hull",
+          "name": "Hull & East Yorkshire",
+          "parks": [
+            {"id":"newlands_sp","name":"Newlands Science Park","location":"Kingston upon Hull","county":"East Yorkshire","local_authority":"Kingston upon Hull","postcode":"HU6 7RX","sector":"Renewables, Digital, Life Sciences","tenants":"20+","operator":"University of Hull","status":"Established","notes":"University of Hull-linked. Growing offshore wind and renewables cluster. Hull's status as UK City of Culture 2017 drove creative digital growth.","website":""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "north_east",
+      "name": "North East",
+      "clusters": [
+        {
+          "id": "newcastle_tyne",
+          "name": "Newcastle & Tyne",
+          "parks": [
+            {"id":"newcastle_helix","name":"Newcastle Helix","location":"Newcastle upon Tyne","county":"Tyne and Wear","local_authority":"Newcastle upon Tyne","postcode":"NE4 5TG","sector":"Data Science, Life Sciences, AI, Digital Health","tenants":"30+","operator":"Newcastle University / Legal & General","status":"Established","notes":"£350m city-centre innovation district. National Innovation Centre for Data, National Innovation Centre for Ageing. Strong AI and health data focus.","website":"https://www.newcastlehelix.com"}
+          ]
+        },
+        {
+          "id": "durham_teesside",
+          "name": "County Durham & Teesside",
+          "parks": [
+            {"id":"netpark","name":"NETPark (North East Technology Park)","location":"Sedgefield, County Durham","county":"County Durham","local_authority":"County Durham","postcode":"TS21 3FB","sector":"Life Sciences, Biotech, Advanced Engineering","tenants":"50+","operator":"Durham County Council / STFC","status":"Established","notes":"STFC-linked. Strong biotech, photonics and precision engineering cluster. Durham University proximity.","website":"https://www.netpark.co.uk"},
+            {"id":"sunderland_sp","name":"Sunderland Software City / Science Complex","location":"Sunderland","county":"Tyne and Wear","local_authority":"Sunderland","postcode":"SR1 1PP","sector":"Digital, Software, Advanced Manufacturing","tenants":"30+","operator":"Sunderland City Council","status":"Established","notes":"Software City initiative. Strong digital and manufacturing focus. University of Sunderland proximity.","website":"https://www.sunderlandsoftwarecity.com"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scotland",
+      "name": "Scotland",
+      "clusters": [
+        {
+          "id": "edinburgh",
+          "name": "Edinburgh & South East Scotland",
+          "parks": [
+            {"id":"bioquarter","name":"BioQuarter Edinburgh","location":"Little France, Edinburgh","county":"Edinburgh","local_authority":"Edinburgh","postcode":"EH16 4UX","sector":"Life Sciences, Clinical Research, Biotech","tenants":"60+","operator":"University of Edinburgh / NHS Lothian / Scottish Enterprise","status":"Established","notes":"Scotland's leading life sciences campus. Co-located with Royal Infirmary of Edinburgh. ClinTec, Synpromics, 4D Pharma alumni.","website":"https://www.edinburghbioquarter.com"},
+            {"id":"heriot_watt_rp","name":"Heriot-Watt University Research Park","location":"Edinburgh","county":"Edinburgh","local_authority":"Edinburgh","postcode":"EH14 4AP","sector":"Engineering, Energy, Data Science, Robotics","tenants":"40+","operator":"Heriot-Watt University","status":"Established","notes":"Strong engineering, energy and robotics focus. National Robotarium on-campus. Growing data science cluster.","website":"https://www.hw.ac.uk/research-park"},
+            {"id":"edinburgh_technopole","name":"Edinburgh Technopole","location":"Bush Estate, Midlothian","county":"Midlothian","local_authority":"Midlothian","postcode":"EH26 0PJ","sector":"Life Sciences, Environmental, IT","tenants":"30+","operator":"Edinburgh BioQuarter / Midlothian Council","status":"Established","notes":"Periurban Edinburgh campus. Strong environmental science and agri-tech focus.","website":""},
+            {"id":"pentlands_sp","name":"Pentlands Science Park","location":"Bush Estate, Midlothian","county":"Midlothian","local_authority":"Midlothian","postcode":"EH26 0PH","sector":"Life Sciences, Environmental, Biotech","tenants":"20+","operator":"Moredun Research Institute","status":"Established","notes":"Agri/vet science focused campus. Strong Moredun links for animal health research.","website":""},
+            {"id":"roslin_biocentre","name":"Roslin BioCentre","location":"Roslin, Midlothian","county":"Midlothian","local_authority":"Midlothian","postcode":"EH25 9PP","sector":"Biomedical, Vet Science, Genomics, AgriTech","tenants":"20+","operator":"University of Edinburgh / Roslin Institute","status":"Established","notes":"Home of Dolly the Sheep research. World-leading animal genomics. Earlham Institute-linked. Strong biomedical foundation.","website":"https://www.roslinbiosciences.com"},
+            {"id":"elvingston","name":"Elvingston Science Centre","location":"Gladsmuir, East Lothian","county":"East Lothian","local_authority":"East Lothian","postcode":"EH33 1NL","sector":"Agri-Tech, Environmental, Life Sciences","tenants":"10+","operator":"Private","status":"Established","notes":"Small specialist agri-tech campus in East Lothian.","website":""}
+          ]
+        },
+        {
+          "id": "glasgow_west",
+          "name": "Glasgow & West Scotland",
+          "parks": [
+            {"id":"biocity_glasgow","name":"BioCity Glasgow","location":"Glasgow","county":"Glasgow","local_authority":"Glasgow","postcode":"G20 0SP","sector":"Life Sciences, Biotech, Pharma","tenants":"30+","operator":"Federated Hermes","status":"Established","notes":"Glasgow's leading life sciences incubator. Proximity to University of Glasgow and Strathclyde. Growing CGT cluster.","website":"https://www.biocity.co.uk/glasgow"},
+            {"id":"west_scotland_sp","name":"West of Scotland Science Park","location":"Glasgow","county":"Glasgow","local_authority":"Glasgow","postcode":"G20 0SP","sector":"Life Sciences, Digital, Engineering","tenants":"50+","operator":"Scottish Enterprise / University of Glasgow","status":"Established","notes":"Established Glasgow innovation campus. Strong university links. Proximity to Queen Elizabeth University Hospital.","website":"https://www.wssp.co.uk"},
+            {"id":"hillington_ic","name":"Hillington Park Innovation Centre","location":"Hillington, Glasgow","county":"Glasgow","local_authority":"Glasgow","postcode":"G52 4RU","sector":"Advanced Manufacturing, Engineering, Digital","tenants":"30+","operator":"Hillington Park","status":"Established","notes":"Large industrial and innovation park. Advanced manufacturing and engineering cluster.","website":""},
+            {"id":"scottish_ent_tp","name":"Scottish Enterprise Technology Park","location":"East Kilbride, South Lanarkshire","county":"South Lanarkshire","local_authority":"South Lanarkshire","postcode":"G75 0QF","sector":"Advanced Manufacturing, Digital, Life Sciences","tenants":"30+","operator":"Scottish Enterprise","status":"Established","notes":"Established technology park south of Glasgow. Advanced manufacturing and engineering focus.","website":""},
+            {"id":"ayrshire_ic","name":"Ayrshire Innovation Centre","location":"Irvine, North Ayrshire","county":"North Ayrshire","local_authority":"North Ayrshire","postcode":"KA11 4HP","sector":"Life Sciences, Digital, Manufacturing","tenants":"20+","operator":"North Ayrshire Council","status":"Established","notes":"West of Scotland innovation hub serving Ayrshire businesses.","website":""}
+          ]
+        },
+        {
+          "id": "dundee_tayside",
+          "name": "Dundee & Tayside",
+          "parks": [
+            {"id":"dundee_medipark","name":"Dundee Medipark","location":"Dundee","county":"Dundee","local_authority":"Dundee","postcode":"DD2 1SW","sector":"Life Sciences, Medical Devices, Digital Health","tenants":"20+","operator":"University of Dundee / NHS Tayside","status":"Established","notes":"Strong medical device and digital health focus. University of Dundee world-leading in drug discovery.","website":"https://www.dundeemedipark.com"},
+            {"id":"dundee_tp","name":"Dundee Technology Park","location":"Dundee","county":"Dundee","local_authority":"Dundee","postcode":"DD2 1TP","sector":"Digital, Life Sciences, Engineering","tenants":"30+","operator":"Scottish Enterprise","status":"Established","notes":"Adjacent to Medipark. Mixed digital and life sciences. Video games industry cluster (Grand Theft Auto origin).","website":""},
+            {"id":"stirling_ip","name":"Stirling University Innovation Park","location":"Stirling","county":"Stirling","local_authority":"Stirling","postcode":"FK9 4NF","sector":"Health, Environment, Digital","tenants":"20+","operator":"University of Stirling","status":"Established","notes":"Health sciences and environmental management focus. University of Stirling Management School proximity.","website":"https://www.stir.ac.uk/innovation-park"},
+            {"id":"tweed_horizons","name":"Tweed Horizons","location":"Newstead, Scottish Borders","county":"Scottish Borders","local_authority":"Scottish Borders","postcode":"TD6 9DQ","sector":"Environmental, Rural Tech, Engineering","tenants":"10+","operator":"Scottish Borders Council","status":"Established","notes":"Rural innovation centre serving Scottish Borders businesses.","website":""}
+          ]
+        },
+        {
+          "id": "aberdeen",
+          "name": "Aberdeen & North East Scotland",
+          "parks": [
+            {"id":"aberdeen_sp","name":"Aberdeen Science Parks (Incubator/Campus)","location":"Aberdeen","county":"Aberdeen","local_authority":"Aberdeen","postcode":"AB25 1HZ","sector":"Energy, Oil & Gas Tech, Marine, Life Sciences","tenants":"30+","operator":"University of Aberdeen / Aberdeen City Council","status":"Established","notes":"Strong energy technology cluster. Oil and gas decommissioning tech. Transition to offshore wind and hydrogen.","website":"https://www.aberdeensciencepark.com"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wales",
+      "name": "Wales",
+      "clusters": [
+        {
+          "id": "cardiff_south_wales",
+          "name": "Cardiff & South Wales",
+          "parks": [
+            {"id":"cardiff_btc","name":"Cardiff Business Technology Centre","location":"Cardiff","county":"Cardiff","local_authority":"Cardiff","postcode":"CF24 5DJ","sector":"Digital, Life Sciences, Creative","tenants":"50+","operator":"Cardiff University / Welsh Government","status":"Established","notes":"Cardiff University proximity. Growing creative digital and life sciences cluster.","website":"https://www.cardiff-btc.co.uk"},
+            {"id":"cardiff_edge","name":"Cardiff Edge","location":"Cardiff","county":"Cardiff","local_authority":"Cardiff","postcode":"CF5 6XF","sector":"Life Sciences, Biotech, Digital Health","tenants":"20+","operator":"Cardiff University / Welsh Government","status":"Established","notes":"Life sciences focus. Strong Cardiff University links. Wales Centre for Health links.","website":""},
+            {"id":"msparc","name":"Menai Science Park (M-SParc)","location":"Gaerwen, Anglesey","county":"Isle of Anglesey","local_authority":"Isle of Anglesey","postcode":"LL60 6HR","sector":"Energy, Environment, Digital, Welsh Language","tenants":"30+","operator":"Bangor University / Welsh Government","status":"Established","notes":"Wales's first bilingual (Welsh/English) science park. Marine energy, offshore wind, environmental tech. Remote Island innovation hub.","website":"https://www.m-sparc.com"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "northern_ireland",
+      "name": "Northern Ireland",
+      "clusters": [
+        {
+          "id": "belfast",
+          "name": "Belfast & Eastern NI",
+          "parks": [
+            {"id":"catalyst_belfast","name":"Catalyst Belfast","location":"Belfast","county":"County Antrim","local_authority":"Belfast","postcode":"BT3 9DT","sector":"Cybersecurity, Fintech, Life Sciences, AI","tenants":"100+","operator":"Catalyst Inc","status":"Established","notes":"Northern Ireland's leading innovation campus. 100+ companies. 1,200+ employees. Strong fintech and cybersecurity cluster. Republic of Ireland gateway.","website":"https://www.wearecatalyst.org"},
+            {"id":"ulster_sp","name":"Ulster Science & Technology Park","location":"Coleraine, Northern Ireland","county":"County Londonderry","local_authority":"Causeway Coast and Glens","postcode":"BT52 1SA","sector":"Digital, Life Sciences, Food","tenants":"20+","operator":"Ulster University","status":"Established","notes":"Ulster University-linked campus. Digital and life sciences focus.","website":""},
+            {"id":"ulster_research_parks","name":"University of Ulster Science Research Parks (Jordanstown/Magee)","location":"Newtownabbey / Derry","county":"County Antrim / County Londonderry","local_authority":"Antrim and Newtownabbey","postcode":"BT37 0QB","sector":"Digital, Engineering, Life Sciences","tenants":"20+","operator":"Ulster University","status":"Established","notes":"Multiple campus sites. Digital and engineering focus. Cross-border innovation potential.","website":""}
+          ]
+        }
+      ]
+    }
+  ]
+}

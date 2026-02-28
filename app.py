@@ -56,6 +56,44 @@ def load_ofcom():
 parks_data = load_parks()
 ofcom_data = load_ofcom()
 
+# ─── FLATTEN NESTED OFCOM STRUCTURE ──────────────────────────────────────────
+def flatten_ofcom(raw):
+    """
+    area_data.json uses nested sub-objects: connectivity, mobile, energy.
+    This converts them to the flat field names the rest of the app expects.
+    Returns an empty dict (falsy) if the raw entry is empty/None.
+    """
+    if not raw:
+        return {}
+
+    conn  = raw.get("connectivity") or {}
+    mob   = raw.get("mobile") or {}
+    # energy not used in scoring yet but available if needed
+
+    flat = {
+        # Connectivity
+        "full_fibre_pct":        conn.get("full_fibre_pct"),
+        "gigabit_pct":           conn.get("gigabit_pct"),
+        "superfast_pct":         conn.get("superfast_pct"),
+        "no_decent_pct":         conn.get("no_decent_pct"),
+        "full_fibre_takeup_pct": conn.get("ff_takeup_pct"),   # key name differs
+        "avg_data_usage_gb":     conn.get("avg_data_usage_gb"),
+        # Mobile
+        "indoor_4g_pct":         mob.get("indoor_4g_all_operators_pct"),
+        "outdoor_4g_pct":        mob.get("outdoor_4g_all_operators_pct"),
+        "outdoor_5g_pct":        mob.get("outdoor_5g_all_operators_pct"),
+        "indoor_voice_pct":      mob.get("indoor_voice_all_operators_pct"),
+    }
+
+    # Guard against legacy merged-council entries that have all zeros:
+    # treat them as no-data so they don't score 20/100 misleadingly.
+    conn_vals = [v for v in [flat["full_fibre_pct"], flat["gigabit_pct"],
+                              flat["indoor_4g_pct"], flat["outdoor_5g_pct"]] if v is not None]
+    if conn_vals and all(v == 0 for v in conn_vals):
+        return {}   # signal "no usable data"
+
+    return flat
+
 # ─── HELPERS: DATA LOOKUPS ────────────────────────────────────────────────────
 def get_ofcom(local_authority):
     if not ofcom_data:
@@ -63,11 +101,11 @@ def get_ofcom(local_authority):
     la_lower = local_authority.lower().strip()
     for key, val in ofcom_data.items():
         if key.lower().strip() == la_lower:
-            return val
+            return flatten_ofcom(val)
     # fuzzy
     for key, val in ofcom_data.items():
         if la_lower in key.lower() or key.lower() in la_lower:
-            return val
+            return flatten_ofcom(val)
     return {}
 
 def get_companies(postcode, api_key, max_results=20):
@@ -419,7 +457,6 @@ def build_intelligence_section(story, flags, opportunities, styles):
     story.append(data_table(["", "Action", "Description"], steps, [10*mm, 50*mm, 110*mm]))
 
 def generate_park_pdf(park, ofcom, companies):
-    """Generate PDF for a single park"""
     buf = BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4,
                              leftMargin=15*mm, rightMargin=15*mm,
@@ -451,7 +488,6 @@ def generate_park_pdf(park, ofcom, companies):
 
 # ─── PDF GENERATION: AREA / CLUSTER / REGION REPORT ──────────────────────────
 def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
-    """Generate aggregate area/cluster/region report for multiple parks"""
     buf = BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4,
                              leftMargin=15*mm, rightMargin=15*mm,
@@ -460,7 +496,6 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
     styles = get_styles()
     story = []
 
-    # ── Cover header ──
     header_data = [[
         Paragraph(report_title, styles["title"]),
         Paragraph(f"{len(parks_list)} parks profiled  ·  {area_label}", styles["subtitle"]),
@@ -475,7 +510,6 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
     story.append(t)
     story.append(Spacer(1, 6*mm))
 
-    # ── Area summary stats ──
     story.append(Paragraph("Area Summary", styles["h2"]))
     scored = [(p, all_ofcom_results.get(p["id"]), score_connectivity(all_ofcom_results.get(p["id"]) or {})[0])
               for p in parks_list]
@@ -505,7 +539,6 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
         story.append(tbl)
     story.append(Spacer(1, 6*mm))
 
-    # ── Connectivity comparison table (ranked) ──
     story.append(Paragraph("Connectivity Comparison — All Parks (Ranked)", styles["h2"]))
     ranked = sorted(scored, key=lambda x: (x[2] is None, -(x[2] or 0)))
 
@@ -528,7 +561,6 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
     story.append(Paragraph("Data: Ofcom Connected Nations July 2024 · Local authority level · On-site survey recommended for campus-specific accuracy.", styles["caveat"]))
     story.append(Spacer(1, 6*mm))
 
-    # ── Aggregate opportunities ──
     all_ops = {}
     for park in parks_list:
         ofcom = all_ofcom_results.get(park["id"]) or {}
@@ -543,7 +575,6 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
         story.append(data_table(["Parks", "Opportunity"], op_rows, [20*mm, 150*mm]))
         story.append(Spacer(1, 6*mm))
 
-    # ── Individual park summaries (one per park) ──
     story.append(PageBreak())
     story.append(Paragraph("Individual Park Summaries", styles["h2"]))
 
@@ -564,7 +595,6 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
             Spacer(1, 2*mm),
         ]))
 
-        # Mini data table
         cs_str = f"{conn_score}/100 [{conn_rag}]" if conn_score is not None else "No Ofcom data"
         ms_str = f"{mob_score}/100" if mob_score is not None else "—"
         mini_rows = [
@@ -610,7 +640,6 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
 st.title("🔬 UK Science Parks Intelligence")
 st.markdown("*National prospecting tool — digital infrastructure profiling for science & innovation parks*")
 
-# ── Sidebar ──
 with st.sidebar:
     st.header("⚙️ Settings")
     ch_api_key = st.secrets.get("CH_API_KEY", "") if hasattr(st, "secrets") else ""
@@ -629,10 +658,8 @@ with st.sidebar:
 
 st.divider()
 
-# ── Build lookup maps ──
 region_map = {r["name"]: r for r in parks_data["regions"]}
 
-# ── Step 1: Region ──
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -645,7 +672,6 @@ if selected_region_name == "— Select a Region —":
 
 selected_region = region_map[selected_region_name]
 
-# ── Step 2: Cluster ──
 with col2:
     cluster_options = ["All clusters in this region"] + [c["name"] for c in selected_region["clusters"]]
     selected_cluster_name = st.selectbox("2️⃣ Select Cluster", cluster_options)
@@ -658,7 +684,6 @@ if not all_clusters_mode:
 else:
     parks_in_scope = [p for c in selected_region["clusters"] for p in c["parks"]]
 
-# ── Step 3: Park ──
 with col3:
     if all_clusters_mode:
         park_options = ["All parks in region"]
@@ -672,7 +697,6 @@ all_parks_mode = selected_park_name.startswith("All parks")
 
 if not all_parks_mode:
     selected_park = next(p for p in parks_in_scope if p["name"] == selected_park_name)
-    # Inject region/cluster context
     region_name = selected_region_name
     cluster_name = selected_cluster_name if not all_clusters_mode else next(
         c["name"] for c in selected_region["clusters"] if any(p["id"] == selected_park["id"] for p in c["parks"])
@@ -701,7 +725,6 @@ if not all_parks_mode:
             flags = generate_flags(park, ofcom) if ofcom else []
             ops = generate_opportunities(park, ofcom or {}, companies)
 
-        # ── Metrics row ──
         m1, m2, m3, m4 = st.columns(4)
         rag_icon = {"Green": "🟢", "Amber": "🟡", "Red": "🔴"}.get(conn_rag, "⚪")
         m1.metric("Connectivity Score", f"{conn_score}/100 {rag_icon}" if conn_score else "No data")
@@ -784,7 +807,6 @@ else:
         report_title = f"Digital Infrastructure Report: {selected_cluster_name}"
 
     parks_list = parks_in_scope
-    # Inject region/cluster into each park
     for park in parks_list:
         park["_region"] = selected_region_name
         if not all_clusters_mode:
@@ -797,7 +819,6 @@ else:
     st.subheader(f"📊 Area Report: {area_label}")
     st.markdown(f"**{len(parks_list)} parks** will be profiled across this {'region' if all_clusters_mode else 'cluster'}.")
 
-    # Preview table
     with st.expander(f"View all {len(parks_list)} parks in scope", expanded=False):
         for p in parks_list:
             st.text(f"  • {p['name']} — {p.get('location','')} ({p.get('local_authority','')})")
@@ -812,10 +833,6 @@ else:
                 else:
                     all_ofcom[park["id"]] = {}
 
-            # Optionally pull companies for all parks (rate-limit conscious)
-            # Not done for area reports to avoid API flooding
-
-        # ── Area summary metrics ──
         with_data = [(p, all_ofcom.get(p["id"])) for p in parks_list if all_ofcom.get(p["id"])]
         scored = [(p, o, score_connectivity(o)[0]) for p, o in with_data]
         scored_valid = [(p, o, s) for p, o, s in scored if s is not None]
@@ -835,7 +852,6 @@ else:
 
         st.divider()
 
-        # ── Ranked connectivity table ──
         st.markdown("**📡 Connectivity Comparison — Ranked**")
         ranked = sorted(scored_valid, key=lambda x: -x[2])
         for park, ofcom, conn_score in ranked:
@@ -850,7 +866,6 @@ else:
             col_d.text(f"5G: {g5}")
             col_e.text(park.get("location",""))
 
-        # Parks with no data
         no_data_parks = [p for p in parks_list if not all_ofcom.get(p["id"])]
         if no_data_parks:
             with st.expander(f"{len(no_data_parks)} parks without Ofcom data match"):
@@ -859,7 +874,6 @@ else:
 
         st.divider()
 
-        # ── Top opportunities across area ──
         all_ops = {}
         for park in parks_list:
             ofcom = all_ofcom.get(park["id"]) or {}
@@ -872,7 +886,6 @@ else:
 
         st.divider()
 
-        # ── Generate area PDF ──
         with st.spinner("Building area report PDF..."):
             pdf_buf = generate_area_pdf(area_label, parks_list, all_ofcom, report_title)
 
@@ -884,7 +897,6 @@ else:
             use_container_width=True, type="primary"
         )
 
-        # ── Option to drill into individual parks ──
         st.divider()
         st.markdown("**🔎 Drill into individual parks from this area**")
         st.info("Use the selectors above to pick a specific park and generate a detailed individual report.")

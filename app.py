@@ -55,6 +55,47 @@ def load_ofcom():
 
 parks_data = load_parks()
 ofcom_data = load_ofcom()
+def build_export_data(park, ofcom, companies, report_type, area_label="", parks_list=None, all_ofcom=None):
+    """Build a structured JSON export for use in the master report app."""
+    export = {
+        "source_app":    "science_parks",
+        "report_type":   report_type,  # "park" or "area"
+        "exported_at":   datetime.datetime.now().strftime("%d %b %Y %H:%M"),
+        "area_label":    area_label,
+    }
+    if report_type == "park" and park:
+        export["parks"] = [{
+            "name":          park.get("name",""),
+            "postcode":      park.get("postcode",""),
+            "location":      park.get("location",""),
+            "sector":        park.get("sector",""),
+            "tenants":       park.get("tenants",""),
+            "operator":      park.get("operator",""),
+            "status":        park.get("status",""),
+            "notes":         park.get("notes",""),
+            "website":       park.get("website",""),
+            "ofcom":         ofcom or {},
+            "companies":     companies or [],
+        }]
+    elif report_type == "area" and parks_list:
+        export["parks"] = []
+        for p in parks_list:
+            pc = p.get("postcode","")
+            ofc = (all_ofcom or {}).get(pc, {})
+            export["parks"].append({
+                "name":      p.get("name",""),
+                "postcode":  pc,
+                "location":  p.get("location",""),
+                "sector":    p.get("sector",""),
+                "tenants":   p.get("tenants",""),
+                "operator":  p.get("operator",""),
+                "status":    p.get("status",""),
+                "notes":     p.get("notes",""),
+                "website":   p.get("website",""),
+                "ofcom":     ofc,
+                "companies": [],
+            })
+    return export
 
 # ─── FLATTEN NESTED OFCOM STRUCTURE ──────────────────────────────────────────
 def flatten_ofcom(raw):
@@ -796,6 +837,15 @@ if not all_parks_mode:
         fname = f"{park['name'].replace(' ','_').replace('/','_')}_intelligence_report.pdf"
         st.download_button("📥 Download Intelligence Report (PDF)", pdf_buf, file_name=fname,
                             mime="application/pdf", use_container_width=True, type="primary")
+        export_data = build_export_data(park, ofcom, companies, "park", park.get("name",""))
+        export_json = json.dumps(export_data, indent=2, default=str)
+        st.download_button(
+            "📤 Export Data for Master Report",
+            data=export_json,
+            file_name=f"{park['name'].replace(' ','_')}_export.json",
+            mime="application/json",
+            use_container_width=True,
+        )
 
 # ─── AREA / MULTI-PARK MODE ───────────────────────────────────────────────────
 else:
@@ -891,12 +941,17 @@ else:
 
         safe_name = area_label.replace(" ","_").replace("&","and").replace("–","_").replace("/","_")
         fname = f"{safe_name}_area_report.pdf"
+        export_data = build_export_data(None, None, None, "area", area_label,
+                                        parks_list=parks_list, all_ofcom=all_ofcom)
+        export_json = json.dumps(export_data, indent=2, default=str)
+        safe_export = area_label.replace(" ","_").replace("&","and").replace("–","_").replace("/","_")
         st.download_button(
-            f"📥 Download {area_label} Area Report (PDF)",
-            pdf_buf, file_name=fname, mime="application/pdf",
-            use_container_width=True, type="primary"
+            f"📤 Export {area_label} Data for Master Report",
+            data=export_json,
+            file_name=f"{safe_export}_export.json",
+            mime="application/json",
+            use_container_width=True,
         )
-
         st.divider()
         st.markdown("**🔎 Drill into individual parks from this area**")
         st.info("Use the selectors above to pick a specific park and generate a detailed individual report.")

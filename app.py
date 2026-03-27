@@ -804,14 +804,15 @@ with st.sidebar:
     else:
         st.success("✓ Companies House API key loaded")
 
-    epc_token = st.secrets.get("EPC_API_TOKEN", "") if hasattr(st, "secrets") else ""
+    epc_token = (st.secrets.get("EPC_API_TOKEN", "") if hasattr(st, "secrets") else "").strip()
     if not epc_token:
         epc_token = st.text_input("EPC API Token", type="password",
                                    help="Base64-encoded email:api_key from epc.opendatacommunities.org")
         if epc_token:
+            epc_token = epc_token.strip()
             st.success("✓ EPC token entered")
     else:
-        st.success("✓ EPC API token loaded")
+        st.success(f"✓ EPC API token loaded ({len(epc_token)} chars)")
 
     intelligence_available = bool(ch_api_key and epc_token)
 
@@ -821,6 +822,8 @@ with st.sidebar:
     debug_pc = st.text_input("Test postcode", value="CB2 1TN", help="Try a Cambridge postcode")
     if st.button("Test EPC API"):
         import requests as _req
+        st.write(f"**Token length:** {len(epc_token)} chars")
+        st.write(f"**Token preview:** `{epc_token[:6]}...{epc_token[-4:]}`")
         pc = debug_pc.replace(" ", "%20")
         url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=5"
         headers = {"Authorization": f"Basic {epc_token}", "Accept": "application/json"}

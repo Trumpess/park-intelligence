@@ -193,33 +193,33 @@ def get_postcode_coords(postcode):
 def get_epc_data(postcode, epc_bearer_token):
     """
     Fetch non-domestic EPC certificates for a postcode.
-    Uses Bearer token — same as cre-intelligence app.
+    Uses GOV.UK One Login Bearer token — same API and auth as cre-intelligence app.
     """
     if not epc_bearer_token or not postcode:
         return {}
     try:
         from collections import Counter
-        pc = postcode.replace(" ", "%20")
-        url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=25"
-        headers = {"Authorization": f"Basic {epc_bearer_token}", "Accept": "application/json"}
-        r = requests.get(url, headers=headers, timeout=10)
-        if r.status_code == 200:
-            rows = r.json().get("rows", [])
-            if not rows:
-                return {}
-            ratings = [row.get("asset-rating-band", "") for row in rows
-                       if row.get("asset-rating-band")]
-            if not ratings:
-                return {}
-            counts = Counter(ratings)
-            total = len(ratings)
-            abc = sum(counts.get(x, 0) for x in ["A", "B", "C"])
-            return {
-                "total":        total,
-                "abc_pct":      round(abc / total * 100) if total else 0,
-                "most_common":  counts.most_common(1)[0][0] if counts else "—",
-                "ratings":      dict(counts),
-            }
+        from datetime import datetime
+        url = "https://api.get-energy-performance-data.communities.gov.uk/api/non-domestic/search"
+        headers = {"Authorization": f"Bearer {epc_bearer_token}", "Accept": "application/json"}
+        r = requests.get(url, params={"postcode": postcode.strip()}, headers=headers, timeout=15)
+        r.raise_for_status()
+        rows = r.json().get("data", [])
+        if not rows:
+            return {}
+        ratings = [row.get("currentEnergyEfficiencyBand", "").upper() for row in rows
+                   if row.get("currentEnergyEfficiencyBand")]
+        if not ratings:
+            return {}
+        counts = Counter(ratings)
+        total = len(ratings)
+        abc = sum(counts.get(x, 0) for x in ["A", "B", "C"])
+        return {
+            "total":       total,
+            "abc_pct":     round(abc / total * 100) if total else 0,
+            "most_common": counts.most_common(1)[0][0] if counts else "—",
+            "ratings":     dict(counts),
+        }
     except Exception:
         pass
     return {}
@@ -821,27 +821,19 @@ with st.sidebar:
         import requests as _req
         st.write(f"**Token length:** {len(epc_bearer_token)} chars" if epc_bearer_token else "**Token:** NOT SET")
         pc = debug_pc.replace(" ", "%20")
-        url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=5"
-        headers = {"Authorization": f"Basic {epc_bearer_token}", "Accept": "application/json"}
+        url = "https://api.get-energy-performance-data.communities.gov.uk/api/non-domestic/search"
+        headers = {"Authorization": f"Bearer {epc_bearer_token}", "Accept": "application/json"}
         try:
-            r = _req.get(url, headers=headers, timeout=10)
+            r = _req.get(url, params={"postcode": debug_pc.strip()}, headers=headers, timeout=15)
             st.write(f"**Status:** {r.status_code}")
             st.write(f"**URL called:** {url}")
             if r.status_code == 200:
                 data = r.json()
-                st.write(f"**Rows returned:** {len(data.get('rows', []))}")
-                if data.get("rows"):
-                    st.write("**First row keys:**", list(data["rows"][0].keys()))
-                    st.write("**First row:**", data["rows"][0])
-                else:
-                    st.write("No rows — trying domestic endpoint...")
-                    url2 = f"https://epc.opendatacommunities.org/api/v1/domestic/search?postcode={pc}&size=5"
-                    r2 = _req.get(url2, headers=headers, timeout=10)
-                    st.write(f"**Domestic status:** {r2.status_code}")
-                    data2 = r2.json()
-                    st.write(f"**Domestic rows:** {len(data2.get('rows', []))}")
-                    if data2.get("rows"):
-                        st.write("**First row keys:**", list(data2["rows"][0].keys()))
+                rows = data.get("data", [])
+                st.write(f"**Rows returned:** {len(rows)}")
+                if rows:
+                    st.write("**First row keys:**", list(rows[0].keys()))
+                    st.write("**Rating:**", rows[0].get("currentEnergyEfficiencyBand","—"))
             else:
                 st.write("**Response body:**", r.text[:500])
         except Exception as e:
@@ -1249,3 +1241,4 @@ else:
     st.divider()
     st.markdown("**🔎 Drill into individual parks from this area**")
     st.info("Use the selectors above to pick a specific park and generate a detailed individual report.")
+

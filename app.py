@@ -610,7 +610,40 @@ def build_intelligence_section(story, flags, opportunities, styles):
     ]
     story.append(data_table(["", "Action", "Description"], steps, [10*mm, 50*mm, 110*mm]))
 
-def generate_park_pdf(park, ofcom, companies):
+def build_epc_flood_section(story, epc, flood_risk, styles):
+    story.append(Paragraph("Energy Performance & Flood Risk", styles["h2"]))
+    epc_rag   = "Green" if (epc or {}).get("most_common","") in ("A","B","C") else                 "Amber" if (epc or {}).get("most_common","") == "D" else                 "Red"   if (epc or {}).get("most_common","") in ("E","F","G") else None
+    flood_rag = {"Zone 1 (Low)":"Green","Zone 2 (Medium)":"Amber","Zone 3 (High)":"Red"}.get(flood_risk or "","")
+
+    rows = []
+    if epc:
+        mc  = epc.get("most_common","—")
+        abc = epc.get("abc_pct", 0)
+        tot = epc.get("total", 0)
+        ratings_str = "  ".join(f"{k}:{v}" for k,v in sorted((epc.get("ratings") or {}).items()))
+        rows += [
+            ["EPC most common rating", mc, "Based on non-domestic certificates at this postcode"],
+            ["EPC A–C rated",          f"{abc}%", f"{tot} certificates found"],
+            ["EPC breakdown",          ratings_str[:60], "All ratings found at postcode"],
+        ]
+        if mc not in ("A","B","C") and mc != "—":
+            rows.append(["⚠ Below 2027 minimum",
+                         "Likely below proposed EPC C threshold",
+                         "Energy upgrade conversation recommended"])
+    else:
+        rows.append(["EPC data", "Not available", "No non-domestic certificates found for this postcode"])
+
+    flood_label = flood_risk or "Unknown"
+    flood_note  = {"Zone 3 (High)":  "High probability — resilience and continuity planning recommended",
+                   "Zone 2 (Medium)":"Medium probability — consider in site resilience assessment",
+                   "Zone 1 (Low)":   "Low flood risk — no specific constraints identified",
+                   "Unknown":        "Could not be determined — check Environment Agency mapping"}.get(flood_label, "")
+    rows.append(["Flood risk (EA)", flood_label, flood_note])
+
+    story.append(data_table(["Metric", "Value", "Notes"], rows, [45*mm, 40*mm, 85*mm]))
+    story.append(Spacer(1, 5*mm))
+
+def generate_park_pdf(park, ofcom, companies, epc=None, flood_risk=None):
     buf = BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4,
                              leftMargin=15*mm, rightMargin=15*mm,
@@ -625,6 +658,8 @@ def generate_park_pdf(park, ofcom, companies):
     build_connectivity_section(story, ofcom, styles)
     story.append(HRFlowable(width="100%", thickness=1, color=MGREY, spaceAfter=4*mm))
     build_companies_section(story, companies, park, styles)
+    story.append(HRFlowable(width="100%", thickness=1, color=MGREY, spaceAfter=4*mm))
+    build_epc_flood_section(story, epc, flood_risk, styles)
 
     flags = generate_flags(park, ofcom) if ofcom else []
     ops = generate_opportunities(park, ofcom or {}, companies or [])
@@ -632,7 +667,7 @@ def generate_park_pdf(park, ofcom, companies):
 
     story.append(Spacer(1, 10*mm))
     story.append(Paragraph(
-        f"Generated: {datetime.datetime.now().strftime('%d %B %Y %H:%M')} · Data: Ofcom Connected Nations July 2024 · Companies House API · INTERNAL USE ONLY",
+        f"Generated: {datetime.datetime.now().strftime('%d %B %Y %H:%M')} · Data: Ofcom Connected Nations Jul 2024 · EPC Register · Companies House · Environment Agency · INTERNAL USE ONLY",
         styles["small"]
     ))
 
@@ -641,7 +676,7 @@ def generate_park_pdf(park, ofcom, companies):
     return buf
 
 # ─── PDF GENERATION: AREA / CLUSTER / REGION REPORT ──────────────────────────
-def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
+def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title, all_intelligence=None):
     buf = BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4,
                              leftMargin=15*mm, rightMargin=15*mm,
@@ -673,11 +708,20 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
         green = sum(1 for _, _, s in with_scores if s >= 70)
         amber = sum(1 for _, _, s in with_scores if 40 <= s < 70)
         red   = sum(1 for _, _, s in with_scores if s < 40)
+        intel_run = all_intelligence is not None
+        epc_count  = sum(1 for p in parks_list
+                         if (all_intelligence or {}).get(p["id"], {}).get("epc")) if intel_run else 0
+        flood_high = sum(1 for p in parks_list
+                         if (all_intelligence or {}).get(p["id"], {}).get("flood_risk","") == "Zone 3 (High)") if intel_run else 0
         summary_rows = [
             ["Parks in area", str(len(parks_list)), "Average connectivity score", f"{avg_score}/100"],
             ["Green RAG", str(green), "Amber RAG", str(amber)],
             ["Red RAG", str(red), "Parks with Ofcom data", str(len(with_scores))],
         ]
+        if intel_run:
+            summary_rows += [
+                ["Parks with EPC data", str(epc_count), "High flood risk parks", str(flood_high)],
+            ]
         body_s = ParagraphStyle("sb", fontSize=9, fontName="Helvetica", textColor=colors.HexColor("#2C2C2C"))
         key_s = ParagraphStyle("sk", fontSize=9, fontName="Helvetica-Bold", textColor=NAVY)
         tbl = Table(
@@ -698,21 +742,36 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
 
     comp_rows = []
     for rank, (park, ofcom, conn_score) in enumerate(ranked, 1):
-        rag = score_connectivity(ofcom or {})[1] if ofcom else "No data"
-        ff = f"{ofcom.get('full_fibre_pct', 0):.0f}%" if ofcom else "—"
-        gig = f"{ofcom.get('gigabit_pct', 0):.0f}%" if ofcom else "—"
-        g4 = f"{ofcom.get('indoor_4g_pct', 0):.0f}%" if ofcom else "—"
-        g5 = f"{ofcom.get('outdoor_5g_pct', 0):.0f}%" if ofcom else "—"
+        rag       = score_connectivity(ofcom or {})[1] if ofcom else "No data"
+        ff        = f"{ofcom.get('full_fibre_pct', 0):.0f}%" if ofcom else "—"
+        gig       = f"{ofcom.get('gigabit_pct', 0):.0f}%" if ofcom else "—"
+        g4        = f"{ofcom.get('indoor_4g_pct', 0):.0f}%" if ofcom else "—"
+        g5        = f"{ofcom.get('outdoor_5g_pct', 0):.0f}%" if ofcom else "—"
         score_str = f"{conn_score}/100" if conn_score is not None else "—"
-        comp_rows.append([str(rank), park["name"][:28], park.get("local_authority","")[:18],
-                          score_str, rag, ff, gig, g4, g5])
+        intel     = (all_intelligence or {}).get(park["id"], {})
+        epc_str   = intel.get("epc", {}).get("most_common", "—") if intel else "—"
+        flood_str = intel.get("flood_risk", "—") if intel else "—"
+        flood_short = {"Zone 3 (High)":"Z3","Zone 2 (Medium)":"Z2","Zone 1 (Low)":"Z1"}.get(flood_str, "—")
+        if all_intelligence:
+            comp_rows.append([str(rank), park["name"][:25], park.get("local_authority","")[:16],
+                              score_str, rag, ff, gig, g4, g5, epc_str, flood_short])
+        else:
+            comp_rows.append([str(rank), park["name"][:28], park.get("local_authority","")[:18],
+                              score_str, rag, ff, gig, g4, g5])
 
-    story.append(data_table(
-        ["#", "Park", "Local Authority", "Score", "RAG", "FF%", "Gig%", "4G%", "5G%"],
-        comp_rows,
-        [8*mm, 48*mm, 32*mm, 17*mm, 16*mm, 13*mm, 13*mm, 12*mm, 12*mm]
-    ))
-    story.append(Paragraph("Data: Ofcom Connected Nations July 2024 · Local authority level · On-site survey recommended for campus-specific accuracy.", styles["caveat"]))
+    if all_intelligence:
+        story.append(data_table(
+            ["#", "Park", "Local Authority", "Score", "RAG", "FF%", "Gig%", "4G%", "5G%", "EPC", "Flood"],
+            comp_rows,
+            [7*mm, 40*mm, 28*mm, 15*mm, 14*mm, 11*mm, 11*mm, 11*mm, 11*mm, 11*mm, 11*mm]
+        ))
+    else:
+        story.append(data_table(
+            ["#", "Park", "Local Authority", "Score", "RAG", "FF%", "Gig%", "4G%", "5G%"],
+            comp_rows,
+            [8*mm, 48*mm, 32*mm, 17*mm, 16*mm, 13*mm, 13*mm, 12*mm, 12*mm]
+        ))
+    story.append(Paragraph("Data: Ofcom Connected Nations Jul 2024 · EPC Register · Environment Agency · Local authority level · On-site survey recommended.", styles["caveat"]))
     story.append(Spacer(1, 6*mm))
 
     all_ops = {}
@@ -749,12 +808,16 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
             Spacer(1, 2*mm),
         ]))
 
-        cs_str = f"{conn_score}/100 [{conn_rag}]" if conn_score is not None else "No Ofcom data"
-        ms_str = f"{mob_score}/100" if mob_score is not None else "—"
+        cs_str  = f"{conn_score}/100 [{conn_rag}]" if conn_score is not None else "No Ofcom data"
+        ms_str  = f"{mob_score}/100" if mob_score is not None else "—"
+        p_intel = (all_intelligence or {}).get(park["id"], {})
+        epc_str = p_intel.get("epc", {}).get("most_common", "—") if p_intel else "—"
+        flood_s = p_intel.get("flood_risk", "—") if p_intel else "—"
         mini_rows = [
             ["Connectivity Score", cs_str, "Mobile Score", ms_str],
             ["Full Fibre %", f"{ofcom.get('full_fibre_pct',0):.0f}%" if ofcom else "—",
              "5G Outdoor %", f"{ofcom.get('outdoor_5g_pct',0):.0f}%" if ofcom else "—"],
+            ["EPC Rating", epc_str, "Flood Risk", flood_s],
             ["Sector", park.get("sector","")[:40], "Operator", park.get("operator","")[:35]],
             ["Status", park.get("status",""), "Tenants", park.get("tenants","")],
         ]
@@ -782,7 +845,7 @@ def generate_area_pdf(area_label, parks_list, all_ofcom_results, report_title):
     story.append(HRFlowable(width="100%", thickness=1, color=MGREY))
     story.append(Spacer(1, 3*mm))
     story.append(Paragraph(
-        f"Generated: {datetime.datetime.now().strftime('%d %B %Y %H:%M')} · Data: Ofcom Connected Nations July 2024 · INTERNAL USE ONLY",
+        f"Generated: {datetime.datetime.now().strftime('%d %B %Y %H:%M')} · Data: Ofcom Connected Nations Jul 2024 · EPC Register · Environment Agency · INTERNAL USE ONLY",
         styles["small"]
     ))
 
@@ -990,7 +1053,7 @@ if not all_parks_mode:
 
         st.divider()
         with st.spinner("Building PDF..."):
-            pdf_buf = generate_park_pdf(park, ofcom, companies)
+            pdf_buf = generate_park_pdf(park, ofcom, companies, epc=epc, flood_risk=flood)
 
         fname = f"{park['name'].replace(' ','_').replace('/','_')}_intelligence_report.pdf"
         st.download_button("📥 Download Intelligence Report (PDF)", pdf_buf, file_name=fname,
@@ -1188,7 +1251,7 @@ else:
     st.divider()
 
     with st.spinner("Building area report PDF..."):
-        pdf_buf = generate_area_pdf(area_label, parks_list, all_ofcom, report_title)
+        pdf_buf = generate_area_pdf(area_label, parks_list, all_ofcom, report_title, all_intelligence=all_intelligence)
 
     safe_name = area_label.replace(" ","_").replace("&","and").replace("–","_").replace("/","_")
     fname     = f"{safe_name}_area_report.pdf"

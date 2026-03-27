@@ -190,19 +190,18 @@ def get_postcode_coords(postcode):
         pass
     return None, None
 
-def get_epc_data(postcode, epc_token):
+def get_epc_data(postcode, epc_bearer_token):
     """
-    Fetch EPC certificates for a postcode from the MHCLG EPC Register.
-    epc_token: base64-encoded 'email:api_key' string (stored as EPC_API_TOKEN in secrets).
-    Returns a summary dict or {} if unavailable.
+    Fetch non-domestic EPC certificates for a postcode.
+    Uses Bearer token — same as cre-intelligence app.
     """
-    if not epc_token or not postcode:
+    if not epc_bearer_token or not postcode:
         return {}
     try:
         from collections import Counter
         pc = postcode.replace(" ", "%20")
         url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=25"
-        headers = {"Authorization": f"Basic {epc_token}", "Accept": "application/json"}
+        headers = {"Authorization": f"Bearer {epc_bearer_token}", "Accept": "application/json"}
         r = requests.get(url, headers=headers, timeout=10)
         if r.status_code == 200:
             rows = r.json().get("rows", [])
@@ -256,7 +255,7 @@ def get_flood_risk(lat, lon):
     except Exception:
         return "Unknown"
 
-def run_park_intelligence(park, ch_api_key, epc_token):
+def run_park_intelligence(park, ch_api_key, epc_bearer_token):
     """
     Run all live API calls for a single park.
     Returns a dict: { ofcom, companies, epc, flood_risk, coords }
@@ -266,7 +265,7 @@ def run_park_intelligence(park, ch_api_key, epc_token):
     la       = park.get("local_authority", "")
     ofcom    = get_ofcom(la)
     companies = get_companies(postcode, ch_api_key) if ch_api_key else []
-    epc       = get_epc_data(postcode, epc_token)
+    epc       = get_epc_data(postcode, epc_bearer_token)
     lat, lon  = get_postcode_coords(postcode)
     flood     = get_flood_risk(lat, lon)
     return {
@@ -804,17 +803,15 @@ with st.sidebar:
     else:
         st.success("✓ Companies House API key loaded")
 
-    epc_token = (st.secrets.get("EPC_API_TOKEN", "") if hasattr(st, "secrets") else "").strip()
-    if not epc_token:
-        epc_token = st.text_input("EPC API Token", type="password",
-                                   help="Base64-encoded email:api_key from epc.opendatacommunities.org")
-        if epc_token:
-            epc_token = epc_token.strip()
-            st.success("✓ EPC token entered")
+    epc_bearer_token = ""
+    if hasattr(st, "secrets"):
+        epc_bearer_token = st.secrets.get("api_keys", {}).get("epc_bearer_token", "")
+    if epc_bearer_token:
+        st.success("✓ EPC token loaded")
     else:
-        st.success(f"✓ EPC API token loaded ({len(epc_token)} chars)")
+        st.warning("EPC token not set — add epc_bearer_token under [api_keys] in secrets")
 
-    intelligence_available = bool(ch_api_key and epc_token)
+    intelligence_available = bool(ch_api_key and epc_bearer_token)
 
 
     st.divider()
@@ -822,11 +819,10 @@ with st.sidebar:
     debug_pc = st.text_input("Test postcode", value="CB2 1TN", help="Try a Cambridge postcode")
     if st.button("Test EPC API"):
         import requests as _req
-        st.write(f"**Token length:** {len(epc_token)} chars")
-        st.write(f"**Token preview:** `{epc_token[:6]}...{epc_token[-4:]}`")
+        st.write(f"**Token length:** {len(epc_bearer_token)} chars" if epc_bearer_token else "**Token:** NOT SET")
         pc = debug_pc.replace(" ", "%20")
         url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=5"
-        headers = {"Authorization": f"Basic {epc_token}", "Accept": "application/json"}
+        headers = {"Authorization": f"Bearer {epc_bearer_token}", "Accept": "application/json"}
         try:
             r = _req.get(url, headers=headers, timeout=10)
             st.write(f"**Status:** {r.status_code}")
@@ -922,7 +918,7 @@ if not all_parks_mode:
         with st.spinner("Pulling data..."):
             ofcom     = get_ofcom(park.get("local_authority",""))
             companies = get_companies(park.get("postcode",""), ch_api_key) if ch_api_key else []
-            epc       = get_epc_data(park.get("postcode",""), epc_token)
+            epc       = get_epc_data(park.get("postcode",""), epc_bearer_token)
             lat, lon  = get_postcode_coords(park.get("postcode",""))
             flood     = get_flood_risk(lat, lon)
             conn_score, conn_rag = score_connectivity(ofcom)
@@ -1091,7 +1087,7 @@ else:
             for i, park in enumerate(parks_list):
                 progress.progress((i) / len(parks_list),
                                   text=f"Running APIs for {park['name']} ({i+1}/{len(parks_list)})…")
-                intel = run_park_intelligence(park, ch_api_key, epc_token)
+                intel = run_park_intelligence(park, ch_api_key, epc_bearer_token)
                 all_intelligence[park["id"]] = intel
             progress.progress(1.0, text="Intelligence run complete.")
             # Merge ofcom from full run into all_ofcom dict too
@@ -1253,4 +1249,3 @@ else:
     st.divider()
     st.markdown("**🔎 Drill into individual parks from this area**")
     st.info("Use the selectors above to pick a specific park and generate a detailed individual report.")
-

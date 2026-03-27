@@ -201,7 +201,7 @@ def get_epc_data(postcode, epc_bearer_token):
         from collections import Counter
         pc = postcode.replace(" ", "%20")
         url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=25"
-        headers = {"Authorization": f"Bearer {epc_bearer_token}", "Accept": "application/json"}
+        headers = {"Authorization": f"Basic {epc_bearer_token}", "Accept": "application/json"}
         r = requests.get(url, headers=headers, timeout=10)
         if r.status_code == 200:
             rows = r.json().get("rows", [])
@@ -822,7 +822,7 @@ with st.sidebar:
         st.write(f"**Token length:** {len(epc_bearer_token)} chars" if epc_bearer_token else "**Token:** NOT SET")
         pc = debug_pc.replace(" ", "%20")
         url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=5"
-        headers = {"Authorization": f"Bearer {epc_bearer_token}", "Accept": "application/json"}
+        headers = {"Authorization": f"Basic {epc_bearer_token}", "Accept": "application/json"}
         try:
             r = _req.get(url, headers=headers, timeout=10)
             st.write(f"**Status:** {r.status_code}")

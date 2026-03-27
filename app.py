@@ -815,30 +815,6 @@ with st.sidebar:
 
 
     st.divider()
-    st.markdown("**🔧 EPC Debug**")
-    debug_pc = st.text_input("Test postcode", value="CB2 1TN", help="Try a Cambridge postcode")
-    if st.button("Test EPC API"):
-        import requests as _req
-        st.write(f"**Token length:** {len(epc_bearer_token)} chars" if epc_bearer_token else "**Token:** NOT SET")
-        pc = debug_pc.replace(" ", "%20")
-        url = "https://api.get-energy-performance-data.communities.gov.uk/api/non-domestic/search"
-        headers = {"Authorization": f"Bearer {epc_bearer_token}", "Accept": "application/json"}
-        try:
-            r = _req.get(url, params={"postcode": debug_pc.strip()}, headers=headers, timeout=15)
-            st.write(f"**Status:** {r.status_code}")
-            st.write(f"**URL called:** {url}")
-            if r.status_code == 200:
-                data = r.json()
-                rows = data.get("data", [])
-                st.write(f"**Rows returned:** {len(rows)}")
-                if rows:
-                    st.write("**First row keys:**", list(rows[0].keys()))
-                    st.write("**Rating:**", rows[0].get("currentEnergyEfficiencyBand","—"))
-            else:
-                st.write("**Response body:**", r.text[:500])
-        except Exception as e:
-            st.write(f"**Error:** {e}")
-
     st.divider()
     st.markdown("**About**")
     st.markdown(f"🏢 **{sum(len(c['parks']) for r in parks_data['regions'] for c in r['clusters'])} parks** indexed")
@@ -1241,4 +1217,3 @@ else:
     st.divider()
     st.markdown("**🔎 Drill into individual parks from this area**")
     st.info("Use the selectors above to pick a specific park and generate a detailed individual report.")
-

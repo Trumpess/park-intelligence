@@ -55,45 +55,57 @@ def load_ofcom():
 
 parks_data = load_parks()
 ofcom_data = load_ofcom()
-def build_export_data(park, ofcom, companies, report_type, area_label="", parks_list=None, all_ofcom=None):
-    """Build a structured JSON export for use in the master report app."""
+def build_export_data(park, ofcom, companies, report_type, area_label="",
+                      parks_list=None, all_ofcom=None, all_intelligence=None,
+                      epc=None, flood_risk=None):
+    """
+    Build a structured JSON export for use in the master report app.
+    all_intelligence: optional dict keyed by park id with full intelligence results
+                      (ofcom, companies, epc, flood_risk, coords).
+    """
     export = {
-        "source_app":    "science_parks",
-        "report_type":   report_type,  # "park" or "area"
-        "exported_at":   datetime.datetime.now().strftime("%d %b %Y %H:%M"),
-        "area_label":    area_label,
+        "source_app":          "science_parks",
+        "report_type":         report_type,  # "park" or "area"
+        "exported_at":         datetime.datetime.now().strftime("%d %b %Y %H:%M"),
+        "area_label":          area_label,
+        "intelligence_run":    all_intelligence is not None or epc is not None,
     }
     if report_type == "park" and park:
         export["parks"] = [{
-            "name":          park.get("name",""),
-            "postcode":      park.get("postcode",""),
-            "location":      park.get("location",""),
-            "sector":        park.get("sector",""),
-            "tenants":       park.get("tenants",""),
-            "operator":      park.get("operator",""),
-            "status":        park.get("status",""),
-            "notes":         park.get("notes",""),
-            "website":       park.get("website",""),
-            "ofcom":         ofcom or {},
-            "companies":     companies or [],
+            "name":       park.get("name", ""),
+            "postcode":   park.get("postcode", ""),
+            "location":   park.get("location", ""),
+            "sector":     park.get("sector", ""),
+            "tenants":    park.get("tenants", ""),
+            "operator":   park.get("operator", ""),
+            "status":     park.get("status", ""),
+            "notes":      park.get("notes", ""),
+            "website":    park.get("website", ""),
+            "ofcom":      ofcom or {},
+            "companies":  companies or [],
+            "epc":        epc or {},
+            "flood_risk": flood_risk or "Unknown",
         }]
     elif report_type == "area" and parks_list:
         export["parks"] = []
         for p in parks_list:
-            pc = p.get("postcode","")
-            ofc = (all_ofcom or {}).get(pc, {})
+            pid = p.get("id", p.get("postcode", ""))
+            intel = (all_intelligence or {}).get(pid, {})
+            ofc   = intel.get("ofcom") or (all_ofcom or {}).get(pid, {})
             export["parks"].append({
-                "name":      p.get("name",""),
-                "postcode":  pc,
-                "location":  p.get("location",""),
-                "sector":    p.get("sector",""),
-                "tenants":   p.get("tenants",""),
-                "operator":  p.get("operator",""),
-                "status":    p.get("status",""),
-                "notes":     p.get("notes",""),
-                "website":   p.get("website",""),
-                "ofcom":     ofc,
-                "companies": [],
+                "name":       p.get("name", ""),
+                "postcode":   p.get("postcode", ""),
+                "location":   p.get("location", ""),
+                "sector":     p.get("sector", ""),
+                "tenants":    p.get("tenants", ""),
+                "operator":   p.get("operator", ""),
+                "status":     p.get("status", ""),
+                "notes":      p.get("notes", ""),
+                "website":    p.get("website", ""),
+                "ofcom":      ofc,
+                "companies":  intel.get("companies", []),
+                "epc":        intel.get("epc", {}),
+                "flood_risk": intel.get("flood_risk", ""),
             })
     return export
 
@@ -162,6 +174,108 @@ def get_companies(postcode, api_key, max_results=20):
     except Exception:
         pass
     return []
+
+# ─── LIVE API HELPERS: EPC / FLOOD / COORDS ───────────────────────────────────
+def get_postcode_coords(postcode):
+    """Resolve a UK postcode to lat/lon via postcodes.io (free, no key required)."""
+    if not postcode:
+        return None, None
+    try:
+        pc = postcode.replace(" ", "")
+        r = requests.get(f"https://api.postcodes.io/postcodes/{pc}", timeout=6)
+        if r.status_code == 200:
+            result = r.json().get("result") or {}
+            return result.get("latitude"), result.get("longitude")
+    except Exception:
+        pass
+    return None, None
+
+def get_epc_data(postcode, epc_token):
+    """
+    Fetch EPC certificates for a postcode from the MHCLG EPC Register.
+    epc_token: base64-encoded 'email:api_key' string (stored as EPC_API_TOKEN in secrets).
+    Returns a summary dict or {} if unavailable.
+    """
+    if not epc_token or not postcode:
+        return {}
+    try:
+        from collections import Counter
+        pc = postcode.replace(" ", "%20")
+        url = f"https://epc.opendatacommunities.org/api/v1/domestic/search?postcode={pc}&size=25"
+        headers = {"Authorization": f"Basic {epc_token}", "Accept": "application/json"}
+        r = requests.get(url, headers=headers, timeout=10)
+        if r.status_code == 200:
+            rows = r.json().get("rows", [])
+            if not rows:
+                return {}
+            ratings = [row.get("current-energy-rating", "") for row in rows
+                       if row.get("current-energy-rating")]
+            if not ratings:
+                return {}
+            counts = Counter(ratings)
+            total = len(ratings)
+            abc = sum(counts.get(x, 0) for x in ["A", "B", "C"])
+            return {
+                "total":        total,
+                "abc_pct":      round(abc / total * 100) if total else 0,
+                "most_common":  counts.most_common(1)[0][0] if counts else "—",
+                "ratings":      dict(counts),
+            }
+    except Exception:
+        pass
+    return {}
+
+def get_flood_risk(lat, lon):
+    """
+    Check EA Flood Map for Planning zones (3 then 2) for a lat/lon point.
+    Returns 'Zone 3 (High)', 'Zone 2 (Medium)', or 'Zone 1 (Low)'.
+    """
+    if not lat or not lon:
+        return "Unknown"
+    base = "https://environment.maps.arcgis.com/arcgis/rest/services/EA"
+    params = {
+        "geometry":      f"{lon},{lat}",
+        "geometryType":  "esriGeometryPoint",
+        "inSR":          "4326",
+        "spatialRel":    "esriSpatialRelIntersects",
+        "returnCountOnly": "true",
+        "f":             "json",
+    }
+    try:
+        r3 = requests.get(
+            f"{base}/FloodMapForPlanningRiversSeasFloodZone3/MapServer/0/query",
+            params=params, timeout=8)
+        if r3.status_code == 200 and r3.json().get("count", 0) > 0:
+            return "Zone 3 (High)"
+        r2 = requests.get(
+            f"{base}/FloodMapForPlanningRiversSeasFloodZone2/MapServer/0/query",
+            params=params, timeout=8)
+        if r2.status_code == 200 and r2.json().get("count", 0) > 0:
+            return "Zone 2 (Medium)"
+        return "Zone 1 (Low)"
+    except Exception:
+        return "Unknown"
+
+def run_park_intelligence(park, ch_api_key, epc_token):
+    """
+    Run all live API calls for a single park.
+    Returns a dict: { ofcom, companies, epc, flood_risk, coords }
+    Ofcom is still fetched from the local area_data.json.
+    """
+    postcode = park.get("postcode", "")
+    la       = park.get("local_authority", "")
+    ofcom    = get_ofcom(la)
+    companies = get_companies(postcode, ch_api_key) if ch_api_key else []
+    epc       = get_epc_data(postcode, epc_token)
+    lat, lon  = get_postcode_coords(postcode)
+    flood     = get_flood_risk(lat, lon)
+    return {
+        "ofcom":      ofcom,
+        "companies":  companies,
+        "epc":        epc,
+        "flood_risk": flood,
+        "coords":     {"lat": lat, "lon": lon},
+    }
 
 def score_connectivity(ofcom):
     if not ofcom:
@@ -690,6 +804,18 @@ with st.sidebar:
     else:
         st.success("✓ Companies House API key loaded")
 
+    epc_token = st.secrets.get("EPC_API_TOKEN", "") if hasattr(st, "secrets") else ""
+    if not epc_token:
+        epc_token = st.text_input("EPC API Token", type="password",
+                                   help="Base64-encoded email:api_key from epc.opendatacommunities.org")
+        if epc_token:
+            st.success("✓ EPC token entered")
+    else:
+        st.success("✓ EPC API token loaded")
+
+    intelligence_available = bool(ch_api_key and epc_token)
+
+
     st.divider()
     st.markdown("**About**")
     st.markdown(f"🏢 **{sum(len(c['parks']) for r in parks_data['regions'] for c in r['clusters'])} parks** indexed")
@@ -759,12 +885,15 @@ if not all_parks_mode:
 
     if st.button("🔍 Generate Intelligence Report", type="primary", use_container_width=True):
         with st.spinner("Pulling data..."):
-            ofcom = get_ofcom(park.get("local_authority",""))
+            ofcom     = get_ofcom(park.get("local_authority",""))
             companies = get_companies(park.get("postcode",""), ch_api_key) if ch_api_key else []
+            epc       = get_epc_data(park.get("postcode",""), epc_token)
+            lat, lon  = get_postcode_coords(park.get("postcode",""))
+            flood     = get_flood_risk(lat, lon)
             conn_score, conn_rag = score_connectivity(ofcom)
             mob_score = score_mobile(ofcom)
-            flags = generate_flags(park, ofcom) if ofcom else []
-            ops = generate_opportunities(park, ofcom or {}, companies)
+            flags     = generate_flags(park, ofcom) if ofcom else []
+            ops       = generate_opportunities(park, ofcom or {}, companies)
 
         m1, m2, m3, m4 = st.columns(4)
         rag_icon = {"Green": "🟢", "Amber": "🟡", "Red": "🔴"}.get(conn_rag, "⚪")
@@ -818,6 +947,36 @@ if not all_parks_mode:
                     for c in companies[:15]:
                         st.text(f"• {c.get('title','')} [{c.get('company_status','').capitalize()}]")
 
+            # ── EPC & Flood ───────────────────────────────────────────────────
+            st.divider()
+            epc_col, flood_col = st.columns(2)
+            with epc_col:
+                st.markdown("**⚡ EPC Ratings**")
+                if epc:
+                    abc = epc.get("abc_pct", 0)
+                    mc  = epc.get("most_common", "—")
+                    tot = epc.get("total", 0)
+                    color = "🟢" if abc >= 60 else "🟡" if abc >= 30 else "🔴"
+                    st.metric("A–C rated", f"{abc}% {color}", delta=None)
+                    st.text(f"  Most common: {mc}")
+                    st.text(f"  Certificates found: {tot}")
+                    ratings = epc.get("ratings", {})
+                    if ratings:
+                        st.caption("  " + "  ·  ".join(f"{k}:{v}" for k,v in sorted(ratings.items())))
+                else:
+                    st.caption("EPC data not available for this postcode.")
+            with flood_col:
+                st.markdown("**🌊 Flood Risk**")
+                flood_icon = {"Zone 3 (High)": "🔴", "Zone 2 (Medium)": "🟡",
+                              "Zone 1 (Low)": "🟢"}.get(flood, "⚪")
+                st.metric("Planning zone", f"{flood_icon} {flood}")
+                if flood == "Zone 3 (High)":
+                    st.caption("High probability of flooding. Resilience and continuity planning recommended.")
+                elif flood == "Zone 2 (Medium)":
+                    st.caption("Medium probability. Consider site resilience during sales conversations.")
+                elif flood == "Zone 1 (Low)":
+                    st.caption("Low flood risk. No specific constraints identified.")
+
         if flags:
             st.divider()
             st.markdown("**⚠️ Intelligence Flags**")
@@ -837,7 +996,8 @@ if not all_parks_mode:
         fname = f"{park['name'].replace(' ','_').replace('/','_')}_intelligence_report.pdf"
         st.download_button("📥 Download Intelligence Report (PDF)", pdf_buf, file_name=fname,
                             mime="application/pdf", use_container_width=True, type="primary")
-        export_data = build_export_data(park, ofcom, companies, "park", park.get("name",""))
+        export_data = build_export_data(park, ofcom, companies, "park", park.get("name",""),
+                                        epc=epc, flood_risk=flood)
         export_json = json.dumps(export_data, indent=2, default=str)
         st.download_button(
             "📤 Export Data for Master Report",
@@ -882,76 +1042,180 @@ else:
                     all_ofcom[park["id"]] = get_ofcom(la)
                 else:
                     all_ofcom[park["id"]] = {}
+        st.session_state["area_ofcom"]       = all_ofcom
+        st.session_state["area_intelligence"]= None   # clear any previous full run
+        st.session_state["area_parks"]       = parks_list
+        st.session_state["area_label"]       = area_label
+        st.session_state["report_title"]     = report_title
 
-        with_data = [(p, all_ofcom.get(p["id"])) for p in parks_list if all_ofcom.get(p["id"])]
-        scored = [(p, o, score_connectivity(o)[0]) for p, o in with_data]
-        scored_valid = [(p, o, s) for p, o, s in scored if s is not None]
+    intel_label = "🔬 Run Full Intelligence (EPC · Companies House · Flood Risk)"
+    if intelligence_available:
+        if st.button(intel_label, use_container_width=True):
+            progress = st.progress(0, text="Starting intelligence run…")
+            all_intelligence = {}
+            for i, park in enumerate(parks_list):
+                progress.progress((i) / len(parks_list),
+                                  text=f"Running APIs for {park['name']} ({i+1}/{len(parks_list)})…")
+                intel = run_park_intelligence(park, ch_api_key, epc_token)
+                all_intelligence[park["id"]] = intel
+            progress.progress(1.0, text="Intelligence run complete.")
+            # Merge ofcom from full run into all_ofcom dict too
+            all_ofcom = {pid: v["ofcom"] for pid, v in all_intelligence.items()}
+            st.session_state["area_ofcom"]        = all_ofcom
+            st.session_state["area_intelligence"]  = all_intelligence
+            st.session_state["area_parks"]         = parks_list
+            st.session_state["area_label"]         = area_label
+            st.session_state["report_title"]       = report_title
+    else:
+        st.info("ℹ️ Add Companies House and EPC API keys in settings to enable Full Intelligence run.")
 
-        m1, m2, m3, m4 = st.columns(4)
-        m1.metric("Parks profiled", len(parks_list))
-        if scored_valid:
-            avg = round(sum(s for _,_,s in scored_valid)/len(scored_valid))
-            m2.metric("Avg connectivity score", f"{avg}/100")
-            m3.metric("Parks with Ofcom data", len(scored_valid))
-            greens = sum(1 for _,_,s in scored_valid if s >= 70)
-            m4.metric("Green RAG", f"{greens}/{len(scored_valid)}")
+    # ── Results display ────────────────────────────────────────────────────────
+    if "area_ofcom" not in st.session_state or st.session_state.get("area_label") != area_label:
+        st.stop()
+
+    all_ofcom       = st.session_state["area_ofcom"]
+    all_intelligence= st.session_state.get("area_intelligence")
+    parks_list      = st.session_state["area_parks"]
+    area_label      = st.session_state["area_label"]
+    report_title    = st.session_state["report_title"]
+
+    if all_intelligence:
+        st.success(f"✅ Full intelligence run complete — {len(all_intelligence)} parks enriched with EPC, Companies House, and flood risk data.")
+
+    with_data    = [(p, all_ofcom.get(p["id"])) for p in parks_list if all_ofcom.get(p["id"])]
+    scored       = [(p, o, score_connectivity(o)[0]) for p, o in with_data]
+    scored_valid = [(p, o, s) for p, o, s in scored if s is not None]
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Parks profiled", len(parks_list))
+    if scored_valid:
+        avg    = round(sum(s for _,_,s in scored_valid) / len(scored_valid))
+        greens = sum(1 for _,_,s in scored_valid if s >= 70)
+        m2.metric("Avg connectivity score", f"{avg}/100")
+        m3.metric("Parks with Ofcom data",  len(scored_valid))
+        m4.metric("Green RAG", f"{greens}/{len(scored_valid)}")
+    else:
+        m2.metric("Avg connectivity score", "—")
+        m3.metric("Parks with Ofcom data",  "0")
+        m4.metric("Green RAG", "—")
+
+    if all_intelligence:
+        # Extra summary metrics from full run
+        all_companies = [all_intelligence[p["id"]].get("companies", [])
+                         for p in parks_list if p["id"] in all_intelligence]
+        total_active  = sum(
+            sum(1 for c in co if c.get("company_status","").lower() == "active")
+            for co in all_companies
+        )
+        high_flood    = sum(
+            1 for p in parks_list
+            if (all_intelligence.get(p["id"]) or {}).get("flood_risk","") == "Zone 3 (High)"
+        )
+        epc_data      = [all_intelligence[p["id"]].get("epc",{})
+                         for p in parks_list if p["id"] in all_intelligence]
+        abc_vals      = [e["abc_pct"] for e in epc_data if e.get("abc_pct") is not None]
+        m5, m6, m7    = st.columns(3)
+        m5.metric("Active companies (total)", total_active)
+        m6.metric("High flood risk parks",    high_flood)
+        m7.metric("Avg EPC A–C %",
+                  f"{round(sum(abc_vals)/len(abc_vals))}%" if abc_vals else "—")
+
+    st.divider()
+
+    st.markdown("**📡 Connectivity Comparison — Ranked**")
+    ranked = sorted(scored_valid, key=lambda x: -x[2])
+    for park, ofcom, conn_score in ranked:
+        rag      = score_connectivity(ofcom)[1]
+        rag_icon = {"Green": "🟢", "Amber": "🟡", "Red": "🔴"}.get(rag, "⚪")
+        ff       = f"{ofcom.get('full_fibre_pct',0):.0f}%"
+        g5       = f"{ofcom.get('outdoor_5g_pct',0):.0f}%"
+        if all_intelligence:
+            intel  = all_intelligence.get(park["id"], {})
+            flood  = intel.get("flood_risk","—")
+            epc    = intel.get("epc", {})
+            epc_str= f"EPC:{epc.get('most_common','—')}" if epc else "—"
+            flood_icon = {"Zone 3 (High)":"🔴","Zone 2 (Medium)":"🟡","Zone 1 (Low)":"🟢"}.get(flood,"⚪")
+            cos    = sum(1 for c in intel.get("companies",[]) if c.get("company_status","").lower()=="active")
+            col_a,col_b,col_c,col_d,col_e,col_f,col_g = st.columns([3,1.5,1.2,1.2,1.2,1,1.5])
+            col_a.text(park["name"][:35])
+            col_b.markdown(f"{rag_icon} **{conn_score}/100**")
+            col_c.text(f"FF:{ff}")
+            col_d.text(f"5G:{g5}")
+            col_e.text(epc_str)
+            col_f.markdown(f"{flood_icon}")
+            col_g.text(f"🏢{cos} cos")
         else:
-            m2.metric("Avg connectivity score", "—")
-            m3.metric("Parks with Ofcom data", "0")
-            m4.metric("Green RAG", "—")
-
-        st.divider()
-
-        st.markdown("**📡 Connectivity Comparison — Ranked**")
-        ranked = sorted(scored_valid, key=lambda x: -x[2])
-        for park, ofcom, conn_score in ranked:
-            rag = score_connectivity(ofcom)[1]
-            rag_icon = {"Green": "🟢", "Amber": "🟡", "Red": "🔴"}.get(rag, "⚪")
-            ff = f"{ofcom.get('full_fibre_pct',0):.0f}%"
-            g5 = f"{ofcom.get('outdoor_5g_pct',0):.0f}%"
-            col_a, col_b, col_c, col_d, col_e = st.columns([3, 1.5, 1.2, 1.2, 1.5])
+            col_a,col_b,col_c,col_d,col_e = st.columns([3,1.5,1.2,1.2,1.5])
             col_a.text(park["name"][:38])
             col_b.markdown(f"{rag_icon} **{conn_score}/100**")
             col_c.text(f"FF: {ff}")
             col_d.text(f"5G: {g5}")
             col_e.text(park.get("location",""))
 
-        no_data_parks = [p for p in parks_list if not all_ofcom.get(p["id"])]
-        if no_data_parks:
-            with st.expander(f"{len(no_data_parks)} parks without Ofcom data match"):
-                for p in no_data_parks:
-                    st.text(f"  • {p['name']} (LA: {p.get('local_authority','')})")
+    no_data_parks = [p for p in parks_list if not all_ofcom.get(p["id"])]
+    if no_data_parks:
+        with st.expander(f"{len(no_data_parks)} parks without Ofcom data match"):
+            for p in no_data_parks:
+                st.text(f"  • {p['name']} (LA: {p.get('local_authority','')})")
 
+    st.divider()
+
+    all_ops = {}
+    for park in parks_list:
+        ofcom    = all_ofcom.get(park["id"]) or {}
+        companies= (all_intelligence or {}).get(park["id"], {}).get("companies", [])
+        for op in generate_opportunities(park, ofcom, companies):
+            all_ops[op] = all_ops.get(op, 0) + 1
+    if all_ops:
+        st.markdown("**💼 Top Opportunities Across Area**")
+        for op, count in sorted(all_ops.items(), key=lambda x: -x[1])[:6]:
+            st.info(f"**{count} parks** — {op}")
+
+    # ── Full intelligence: EPC & flood summary table ───────────────────────────
+    if all_intelligence:
         st.divider()
-
-        all_ops = {}
+        st.markdown("**⚡🌊 EPC & Flood Risk Summary**")
         for park in parks_list:
-            ofcom = all_ofcom.get(park["id"]) or {}
-            for op in generate_opportunities(park, ofcom, []):
-                all_ops[op] = all_ops.get(op, 0) + 1
-        if all_ops:
-            st.markdown("**💼 Top Opportunities Across Area**")
-            for op, count in sorted(all_ops.items(), key=lambda x: -x[1])[:6]:
-                st.info(f"**{count} parks** — {op}")
+            intel  = all_intelligence.get(park["id"], {})
+            epc    = intel.get("epc", {})
+            flood  = intel.get("flood_risk", "—")
+            flood_icon = {"Zone 3 (High)":"🔴","Zone 2 (Medium)":"🟡","Zone 1 (Low)":"🟢"}.get(flood,"⚪")
+            epc_str= f"{epc.get('abc_pct','—')}% A–C  (most common: {epc.get('most_common','—')})" if epc else "No EPC data"
+            col1, col2, col3 = st.columns([3, 2, 2])
+            col1.text(park["name"][:38])
+            col2.text(f"EPC: {epc_str[:30]}")
+            col3.text(f"{flood_icon} {flood}")
 
-        st.divider()
+    st.divider()
 
-        with st.spinner("Building area report PDF..."):
-            pdf_buf = generate_area_pdf(area_label, parks_list, all_ofcom, report_title)
+    with st.spinner("Building area report PDF..."):
+        pdf_buf = generate_area_pdf(area_label, parks_list, all_ofcom, report_title)
 
-        safe_name = area_label.replace(" ","_").replace("&","and").replace("–","_").replace("/","_")
-        fname = f"{safe_name}_area_report.pdf"
-        export_data = build_export_data(None, None, None, "area", area_label,
-                                        parks_list=parks_list, all_ofcom=all_ofcom)
-        export_json = json.dumps(export_data, indent=2, default=str)
-        safe_export = area_label.replace(" ","_").replace("&","and").replace("–","_").replace("/","_")
-        st.download_button(
-            f"📤 Export {area_label} Data for Master Report",
-            data=export_json,
-            file_name=f"{safe_export}_export.json",
-            mime="application/json",
-            use_container_width=True,
-        )
-        st.divider()
-        st.markdown("**🔎 Drill into individual parks from this area**")
-        st.info("Use the selectors above to pick a specific park and generate a detailed individual report.")
+    safe_name = area_label.replace(" ","_").replace("&","and").replace("–","_").replace("/","_")
+    fname     = f"{safe_name}_area_report.pdf"
+    st.download_button("📥 Download Area Report (PDF)", pdf_buf, file_name=fname,
+                       mime="application/pdf", use_container_width=True, type="primary")
+
+    export_data = build_export_data(
+        None, None, None, "area", area_label,
+        parks_list=parks_list, all_ofcom=all_ofcom,
+        all_intelligence=all_intelligence
+    )
+    export_json = json.dumps(export_data, indent=2, default=str)
+    intel_suffix = "_enriched" if all_intelligence else ""
+    st.download_button(
+        f"📤 Export {area_label} Data for Master Report",
+        data=export_json,
+        file_name=f"{safe_name}{intel_suffix}_export.json",
+        mime="application/json",
+        use_container_width=True,
+    )
+    if all_intelligence:
+        st.caption("✅ Export includes EPC, Companies House, and flood risk data for every park.")
+    else:
+        st.caption("ℹ️ Run Full Intelligence above to add EPC, Companies House, and flood risk data to the export.")
+
+    st.divider()
+    st.markdown("**🔎 Drill into individual parks from this area**")
+    st.info("Use the selectors above to pick a specific park and generate a detailed individual report.")
+

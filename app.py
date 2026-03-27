@@ -201,15 +201,15 @@ def get_epc_data(postcode, epc_token):
     try:
         from collections import Counter
         pc = postcode.replace(" ", "%20")
-        url = f"https://epc.opendatacommunities.org/api/v1/domestic/search?postcode={pc}&size=25"
+        url = f"https://epc.opendatacommunities.org/api/v1/non-domestic/search?postcode={pc}&size=25"
         headers = {"Authorization": f"Basic {epc_token}", "Accept": "application/json"}
         r = requests.get(url, headers=headers, timeout=10)
         if r.status_code == 200:
             rows = r.json().get("rows", [])
             if not rows:
                 return {}
-            ratings = [row.get("current-energy-rating", "") for row in rows
-                       if row.get("current-energy-rating")]
+            ratings = [row.get("asset-rating-band", "") for row in rows
+                       if row.get("asset-rating-band")]
             if not ratings:
                 return {}
             counts = Counter(ratings)
